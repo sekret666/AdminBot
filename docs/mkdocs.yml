@@ -1,4 +1,4 @@
-site_name: ${PROJECT_NAME}
+site_name: AdminBot
 pages:
   - 'KPS': KPS.md
   - 'License': LICENSE.md
