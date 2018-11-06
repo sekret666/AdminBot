@@ -14,5 +14,4 @@ set_metadata(id, metadata)
 get_clear_times(group_id)
 set_clear_times(group_id, times)
 
-
 ## Logic
