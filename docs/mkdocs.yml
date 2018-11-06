@@ -1,0 +1,9 @@
+site_name: ${PROJECT_NAME}
+pages:
+  - 'KPS': KPS.md
+  - 'License': LICENSE.md
+  - 'Todo list': TODO.md
+  - 'Architecture and Design': DESIGN/ARCHITECTURE.md
+  - 'API': DESIGN/API.md
+  - 'Database': DESIGN/DBMS.md
+theme: 'material'
