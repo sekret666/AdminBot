@@ -29,7 +29,7 @@ dbManager.then(() => {
 
 
 async function doWorks() {
-    const gp = await Group.addGroupByNameAndTgId('azhant', 'aaz')
+    const gp = await Group.addByNameAndTgId('azhant', 'aaz')
     const spam = await Spam.create({text: 'Kir'})
     await gp.addSpam(spam)
     

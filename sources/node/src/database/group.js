@@ -6,7 +6,7 @@ exports.createModel = (sequelize, DataTypes) => {
         tgId: {type: DataTypes.STRING, unique: true}
     })
 
-    Group.addGroupByNameAndTgId = async function(name, groupTgId) {
+    Group.addByNameAndTgId = async function(name, groupTgId) {
         const group = await this.create({
             name: name,
             tgId: groupTgId
@@ -23,7 +23,7 @@ exports.createModel = (sequelize, DataTypes) => {
         })
     }
 
-    Group.findGroupByTgId = async function(groupTgId) {
+    Group.findByTgId = async function(groupTgId) {
         const group = await this.findOne({
             where: {
                 tgId: groupTgId
@@ -34,7 +34,7 @@ exports.createModel = (sequelize, DataTypes) => {
     }
     
     Group.addAdminToGroup = async function(user, groupTgId) {
-        const group = await this.findGroupByTgId(groupTgId)
+        const group = await this.findByTgId(groupTgId)
 
         group.addUser(user, {
             through: { isAdmin: true }
@@ -42,7 +42,7 @@ exports.createModel = (sequelize, DataTypes) => {
     }
 
     Group.removeAdminFromGroup = async function(user, groupTgId) {
-        const group = await this.findGroupByTgId(groupTgId);
+        const group = await this.findByTgId(groupTgId);
 
         group.addUser(user, {
             through: { isAdmin: false }
@@ -50,7 +50,7 @@ exports.createModel = (sequelize, DataTypes) => {
     }
 
     Group.isSpamInGroup = async function (spamText, groupTgId) {
-        const group = await this.findGroupByTgId(groupTgId);
+        const group = await this.findByTgId(groupTgId);
         const groupSpams =  await group.getSpams()
         const spamTexts = groupSpams.map(spam => spam.text)
         
