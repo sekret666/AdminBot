@@ -24,7 +24,7 @@ const Group = GroupModel.createModel(sequelize, Sequelize)
 const Spam = SpamModel.createModel(sequelize, Sequelize)
 const ClearPeriod = ClearPeriodModel.createModel(sequelize, Sequelize)
 
-dbManager = setDatabaseScheme()
+const dbManager = setDatabaseScheme()
 dbManager.then(() => {
     doWorks()
 })
