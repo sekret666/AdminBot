@@ -51,15 +51,25 @@ exports.Manager = class GroupManager {
         })
     }
 
-    addAdminToGroup(admin, groupTgId) {
-        return this.findGroupByTgId(groupTgId).then(group => {
-            group.addAdmin(admin)
+    getAdminsFromGroup(groupTgId) {
+        return this.findGroupByTgId(groupTgId).then((group) => {
+            group.getUsers()
         })
     }
 
-    removeAdminFromGroup(admin, groupTgId) {
+    addAdminToGroup(user, groupTgId) {
         return this.findGroupByTgId(groupTgId).then(group => {
-            group.removeAdmin(admin);
+            group.addUser(user, {
+                through: { isAdmin: true }
+            })
+        })
+    }
+
+    removeAdminFromGroup(user, groupTgId) {
+        return this.findGroupByTgId(groupTgId).then(group => {
+            group.addUser(user, {
+                through: { isAdmin: false }
+            })
         })
     }
 
