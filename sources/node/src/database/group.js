@@ -6,7 +6,7 @@ exports.createModel = (sequelize, DataTypes) => {
         tgId: {type: DataTypes.STRING, unique: true}
     })
 
-    Group.addByNameAndTgId = async function(name, groupTgId) {
+    Group.createByNameAndTgId = async function(name, groupTgId) {
         const group = await this.create({
             name: name,
             tgId: groupTgId
