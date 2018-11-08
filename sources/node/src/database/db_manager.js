@@ -24,8 +24,18 @@ const Spam = SpamModel.createModel(sequelize, Sequelize)
 
 dbManager = setDatabaseScheme()
 dbManager.then(() => {
+    doWorks()
 })
 
+
+async function doWorks() {
+    const gp = await Group.addGroupByNameAndTgId('azhant', 'aaz')
+    const spam = await Spam.create({text: 'Kir'})
+    await gp.addSpam(spam)
+    
+    const check = await Group.isSpamInGroup('Kir', gp.tgId)
+    console.log(check);
+}
 
 function setDatabaseScheme() {
     const UserGroup = sequelize.define('UserGroup', {
