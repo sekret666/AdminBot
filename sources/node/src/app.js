@@ -1,4 +1,5 @@
 const { Bot } = require("./logic/bot.js");
+const { Database } = require("./database/database.js");
 
 const Telegarf = require("telegraf");
 
@@ -16,8 +17,11 @@ const start = () => {
         table_name: "kgb"
     };
 
+    // init database
+    let database = new Database();
+
     // start bot
-    let bot = new Bot(token, options);
+    let bot = new Bot(token, options, database);
     bot.init();
     bot.start();
 };

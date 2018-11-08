@@ -1,8 +1,11 @@
 const Composer = require("telegraf/composer");
 
 class Message extends Composer {
-    constructor() {
+    constructor(database) {
         super();
+
+        // set database object
+        this.database = database;
 
         // init middlewares
         this.use(this.spam_handler);

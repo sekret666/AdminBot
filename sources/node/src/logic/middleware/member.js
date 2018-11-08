@@ -3,8 +3,11 @@ const Markup = require("telegraf/markup");
 const Extra = require("telegraf/extra");
 
 class Member extends Composer {
-    constructor() {
+    constructor(database) {
         super();
+
+        // set database object
+        this.database = database;
 
         // init middlewares
         this.on("new_chat_members", this.join_member_handler.bind(this));
@@ -12,9 +15,63 @@ class Member extends Composer {
     }
 
     async join_member_handler(context) {
-        if (this.has_me(context.message.new_chat_members)) {
+        for (let member of context.message.new_chat_members) {
+            /*
+                $warn = {
+                    // warn a
+                    a.add_warns();
+                    if(a.get_warns() > 3){
+                        block_forever(a);
+                        $remove(a);
+                    }
+                };
+                $added = {
+                    // a added b
+                    a.set_parent(b);
+                    b.add_child(a);
+                    b.set_warns(0);
+                };
+                $removed = {
+                    // * removed b
+                    a = b.get_parent();
+                    a.remove_child(b);
+                    remove_metadata(b);
+                    remove_warns(b);
+                };
+                if(bot) {
+                    if(me) {
+                        if(!admin) {
+                            // say sorry, left chat, set cleartimes to []
+                        } else {
+                            // say thanks, set cleartimes to []
+                        }
+                    } else {
+                        if(!admin) {
+                            // a added bot
+                            remove(bot);
+                            $warn(a);
+                        } else {
+                            // do nothing
+                        }
+                    }
+                } else {
+                    // added
+                }
+            */
+            if (member.is_bot) {
+                if (process.env.BOT_TOKEN.includes(member.id)) {
+                } else {
+                }
+            } else {
+            }
+        }
+
+        if (this.has_me()) {
             // this bot joined
             this.handle_join_me(context);
+        } else if (this.has_bot(context.message.new_chat_members)) {
+            // bot joined
+            this.handle_join_bot(context);
         } else {
             // someone joined
             this.handle_join_other(context);
@@ -22,9 +79,18 @@ class Member extends Composer {
     }
 
     async left_member_handler(context) {
+        for (let member of [context.message.left_chat_member]) {
+            // me => is_admin?
+            // bot => is_admin?
+            // other
+        }
+
         if (this.has_me([context.message.left_chat_member])) {
             // this bot removed
             this.handle_left_me(context);
+        } else if (this.has_bot([context.message.left_chat_member])) {
+            // bot removed
+            this.handle_left_bot(context);
         } else {
             // someone removed
             this.handle_left_other(context);
@@ -46,25 +112,46 @@ class Member extends Composer {
             `);
             context.leaveChat();
         }
+
+        // finally remove message
+        context.deleteMessage();
     }
+
+    handle_join_bot(context) {}
 
     handle_join_other(context) {
         // check someone who added this is admin else if this is bot remove and warn adder else set metadata child and parent
         // if warns was 3, remove and block and warn parent and remove child data from database
-        if (is_admin(context.message.from.id)) {
-        } else {
+        if (!is_admin(context.message.from.id)) {
         }
+
+        // finally remove message
+        context.deleteMessage();
     }
 
     handle_left_me(context) {
         // remove group informations from database (context.message.chat.id)
     }
 
-    handle_left_other(context) {}
+    handle_left_bot(context) {}
+
+    handle_left_other(context) {
+        // finally remove message
+        context.deleteMessage();
+    }
 
     has_me(members) {
         for (let member of members) {
             if (process.env.BOT_TOKEN.includes(member.id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    has_bot(members) {
+        for (let member of members) {
+            if (member.is_bot) {
                 return true;
             }
         }
