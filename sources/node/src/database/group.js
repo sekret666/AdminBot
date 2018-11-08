@@ -51,10 +51,10 @@ exports.Manager = class GroupManager {
         })
     }
 
-    getAdminsFromGroup(groupTgId) {
-        return this.findGroupByTgId(groupTgId).then((group) => {
-            group.getUsers()
-        })
+    async getGroupAdmins(groupTgId) {
+        const group = await this.findGroupByTgId(groupTgId)
+        const admins = await group.getUsers()
+        return admins
     }
 
     addAdminToGroup(user, groupTgId) {
