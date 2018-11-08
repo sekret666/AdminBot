@@ -1,76 +1,61 @@
 var exports = module.exports = {};
 
 exports.createModel = (sequelize, DataTypes) => {
-    return sequelize.define('group', {
+    const Group = sequelize.define('group', {
         name: DataTypes.STRING,
         tgId: {type: DataTypes.STRING, unique: true}
     })
-}
 
-exports.Manager = class GroupManager {
-    constructor(GroupModel) {
-        this.Group = GroupModel
-    }
-
-    addGroup(name, groupTgId) {
-        return this.Group.create({
+    Group.addGroupByNameAndTgId = async function(name, groupTgId) {
+        const group = await this.create({
             name: name,
             tgId: groupTgId
         })
+
+        return group
     }
 
-    removeGroup(groupTgId) {
-        return this.Group.destroy({
+    Group.removeGroupByTgId = async function(groupTgId) {
+        await this.destroy({
             where: {
                 tgId: groupTgId
             }
         })
     }
 
-    getAllGroups() {
-        return this.Group.findAll()
-    }
-
-    findGroupByTgId(groupTgId) {
-        return this.Group.findOne({
+    Group.findGroupByTgId = async function(groupTgId) {
+        const group = await this.findOne({
             where: {
                 tgId: groupTgId
             } 
         })
-    }
 
-    addUserToGroup(user, groupTgId) {
-        return this.findGroupByTgId(groupTgId).then(group => {
-            group.addUser(user)
-        })
+        return group
     }
-
-    removeUserFromGroup(user, groupTgId) {
-        return this.findGroupByTgId(groupTgId).then(group => {
-            group.removeUser(user);
-        })
-    }
-
-    async getGroupAdmins(groupTgId) {
+    
+    Group.addAdminToGroup = async function(user, groupTgId) {
         const group = await this.findGroupByTgId(groupTgId)
-        const admins = await group.getUsers()
-        return admins
-    }
 
-    addAdminToGroup(user, groupTgId) {
-        return this.findGroupByTgId(groupTgId).then(group => {
-            group.addUser(user, {
-                through: { isAdmin: true }
-            })
+        group.addUser(user, {
+            through: { isAdmin: true }
         })
     }
 
-    removeAdminFromGroup(user, groupTgId) {
-        return this.findGroupByTgId(groupTgId).then(group => {
-            group.addUser(user, {
-                through: { isAdmin: false }
-            })
+    Group.removeAdminFromGroup = async function(user, groupTgId) {
+        const group = await this.findGroupByTgId(groupTgId);
+
+        group.addUser(user, {
+            through: { isAdmin: false }
         })
     }
 
+    Group.isSpamInGroup = async function (spamText, groupTgId) {
+        const group = await this.findGroupByTgId(groupTgId);
+        const groupSpams =  await group.getSpams()
+        const spamTexts = groupSpams.map(spam => spam.text)
+        
+        return spamTexts.includes(spamText)
+    }
+ 
+    return Group
 }
