@@ -3,3 +3,5 @@
 sources/*/node_modules/
 sources/*/build/
 sources/*/.env
+*.sqlite
+*db_config.json
