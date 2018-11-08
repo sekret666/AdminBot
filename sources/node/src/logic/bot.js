@@ -6,8 +6,9 @@ const { Member } = require("./middleware/member.js");
 const { Message } = require("./middleware/message.js");
 
 class Bot {
-    constructor(token, options) {
+    constructor(token, options, database) {
         this.bot = new Telegraf(token);
+        this.database = database;
 
         // init bot critical middlewares
         // this.bot.use(Telegraf.log());
@@ -15,12 +16,9 @@ class Bot {
     }
 
     init() {
-        this.bot.use((context, next) => {
-            console.log(context.message);
-        });
-        this.bot.use(new Command());
-        this.bot.use(new Member());
-        this.bot.use(new Message());
+        this.bot.use(new Command(this.database));
+        this.bot.use(new Member(this.database));
+        this.bot.use(new Message(this.database));
     }
 
     start() {
