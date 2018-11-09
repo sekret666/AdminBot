@@ -10,11 +10,15 @@ class Member extends Composer {
         this.database = database;
 
         // init middlewares
-        this.on("new_chat_members", this.join_member_handler.bind(this));
-        this.on("left_chat_member", this.left_member_handler.bind(this));
+        // this.on("new_chat_members", this.join_member_handler_admin.bind(this));
+        // this.on("new_chat_members", this.join_member_handler_admin.bind(this));
+        // this.on("left_chat_member", this.left_member_handler.bind(this));
     }
 
-    async join_member_handler(context) {
+    async join_member_handler(context, next) {
+        console.log("A");
+        return next();
+
         for (let member of context.message.new_chat_members) {
             /*
                 $warn = {
@@ -25,6 +29,10 @@ class Member extends Composer {
                         $remove(a);
                     }
                 };
+                $unwarn = {
+
+                };
+                
                 $added = {
                     // a added b
                     a.set_parent(b);
@@ -79,6 +87,7 @@ class Member extends Composer {
     }
 
     async left_member_handler(context) {
+        console.log("B");
         for (let member of [context.message.left_chat_member]) {
             // me => is_admin?
             // bot => is_admin?

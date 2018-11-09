@@ -17,8 +17,8 @@ class Database {
     get_warns(group_id, id) {}
     set_warns(group_id, id, json_array) {}
 
-    get_metadata(group_id, id) {}
-    set_metadata(group_id, id, json_object) {}
+    get_parent(group_id, id) {}
+    set_parent(group_id, id, parent_id) {}
 
     get_clear_times(group_id) {}
     set_clear_times(group_id, json_array) {}
