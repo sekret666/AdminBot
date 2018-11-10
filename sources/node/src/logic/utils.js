@@ -4,6 +4,7 @@ exports.warn = (context, database) => {
     // message reply warns number
     // remove if 3
     // send warn message reply
+    // check parent exists in group => else remove parent item from group table database
 };
 
 exports.unwarn = (context, database) => {

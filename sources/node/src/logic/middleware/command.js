@@ -60,12 +60,12 @@ class Command extends Composer {
             this.unlearn_handler_public_admin.bind(this)
         );
 
-        this.use(this.unsupport_handler.bind(this));
+        this.on("text", this.unsupport_handler.bind(this));
     }
 
     async start_handler_private(context, next) {
         // check handler condition (is private)
-        if (context.message.chat.type !== "private") {
+        if (!(context.message.chat.type === "private")) {
             return next();
         }
 
@@ -78,8 +78,10 @@ click /help
     async help_handler_private_admin(context, next) {
         // check handler condition (is private and admin)
         if (
-            context.message.chat.type !== "private" ||
-            !this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type === "private" &&
+                this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -95,8 +97,10 @@ Supported private admin commands:
     async help_handler_private_member(context, next) {
         // check handler condition (is private and not admin)
         if (
-            context.message.chat.type !== "private" ||
-            this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type === "private" &&
+                !this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -111,8 +115,10 @@ Supported private member commands:
     async help_handler_public_admin(context, next) {
         // check handler condition (is public and admin)
         if (
-            context.message.chat.type === "private" ||
-            !this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type !== "private" &&
+                this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -129,8 +135,10 @@ Supported public admin commands:
     async help_handler_public_member(context, next) {
         // check handler condition (is public and not admin)
         if (
-            context.message.chat.type === "private" ||
-            this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type !== "private" &&
+                !this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -145,8 +153,10 @@ Supported public member commands:
     async report_handler_public_member(context, next) {
         // check handler condition (is public and not admin)
         if (
-            context.message.chat.type === "private" ||
-            this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type !== "private" &&
+                !this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -182,8 +192,10 @@ Please reply a message to report!
     async register_handler_private_member(context, next) {
         // check handler condition (is private and not admin)
         if (
-            context.message.chat.type !== "private" ||
-            this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type === "private" &&
+                !this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -205,8 +217,10 @@ Incorrect password!
     async warn_handler_public_admin(context, next) {
         // check handler condition (is public and admin)
         if (
-            context.message.chat.type === "private" ||
-            !this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type !== "private" &&
+                this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -223,8 +237,10 @@ Please reply the member message to warn!
     async unwarn_handler_public_admin(context, next) {
         // check handler condition (is public and admin)
         if (
-            context.message.chat.type === "private" ||
-            !this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type !== "private" &&
+                this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -242,8 +258,10 @@ Please reply the member message to unwarn!
     async learn_handler_private_admin(context, next) {
         // check handler condition (is private and admin)
         if (
-            context.message.chat.type !== "private" ||
-            !this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type === "private" &&
+                this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -254,7 +272,7 @@ Please reply the member message to unwarn!
             ""
         );
         if (spam_word !== "") {
-            this.database.add_spam(null, spam_word);
+            this.database.add_global_spam(spam_word);
 
             context.reply(`
 Word learned!
@@ -268,8 +286,10 @@ Please enter a word to global learn!
     async learn_handler_public_admin(context, next) {
         // check handler condition (is public and admin)
         if (
-            context.message.chat.type === "private" ||
-            !this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type !== "private" &&
+                this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -295,8 +315,10 @@ Please enter a word to local learn!
     async unlearn_handler_private_admin(context, next) {
         // check handler condition (is private and admin)
         if (
-            context.message.chat.type !== "private" ||
-            !this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type === "private" &&
+                this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
@@ -307,7 +329,7 @@ Please enter a word to local learn!
             ""
         );
         if (spam_word !== "") {
-            this.database.remove_spam(null, spam_word);
+            this.database.remove_global_spam(spam_word);
 
             context.reply(`
 Word unlearned!
@@ -321,8 +343,10 @@ Please enter a word to global unlearn!
     async unlearn_handler_public_admin(context, next) {
         // check handler condition (is public and admin)
         if (
-            context.message.chat.type === "private" ||
-            !this.database.is_admin(context.message.from.id)
+            !(
+                context.message.chat.type !== "private" &&
+                this.database.is_admin(context.message.from.id)
+            )
         ) {
             return next();
         }
