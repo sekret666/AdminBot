@@ -10,9 +10,37 @@ class Member extends Composer {
         this.database = database;
 
         // init middlewares
-        // this.on("new_chat_members", this.join_member_handler_admin.bind(this));
-        // this.on("new_chat_members", this.join_member_handler_admin.bind(this));
-        // this.on("left_chat_member", this.left_member_handler.bind(this));
+        this.on(
+            "new_chat_members",
+            this.join_member_handler_admin_member.bind(this)
+        );
+        this.on(
+            "new_chat_members",
+            this.join_member_handler_admin_bot.bind(this)
+        );
+        this.on(
+            "new_chat_members",
+            this.join_member_handler_admin_me.bind(this)
+        );
+        this.on(
+            "new_chat_members",
+            this.join_member_handler_member_member.bind(this)
+        );
+        this.on(
+            "new_chat_members",
+            this.join_member_handler_member_bot.bind(this)
+        );
+        this.on(
+            "new_chat_members",
+            this.join_member_handler_member_me.bind(this)
+        );
+
+        // check handler condition (is private)
+        if (context.message.chat.type !== "private") {
+            return next();
+        }
+
+        this.on("left_chat_member", this.left_member_handler.bind(this));
     }
 
     async join_member_handler(context, next) {
