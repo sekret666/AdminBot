@@ -14,7 +14,6 @@ class Message extends Composer {
     }
 
     async spam_handler(context, next) {
-        console.log(context.message);
         // check handler condition (text or caption has spam words of group)
         let words = (context.message.text || "")
             .split(" ")
@@ -26,7 +25,7 @@ class Message extends Composer {
         // delete message
         // warn
         context.deleteMessage();
-        warn(context, this.database);
+        warn(context, this.database, context.message.from.id);
     }
 
     async flood_handler(context, next) {

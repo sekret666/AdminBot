@@ -53,6 +53,13 @@ class Member extends Composer {
             return;
         }
 
+        // set parent
+        this.database.set_parent(
+            context.message.chat.id,
+            member.id,
+            context.message.from.id
+        );
+
         // delete message
         context.deleteMessage();
     }
@@ -82,6 +89,13 @@ Thanks dear ${context.message.from.first_name}!
             return;
         }
 
+        // set parent
+        this.database.set_parent(
+            context.message.chat.id,
+            member.id,
+            context.message.from.id
+        );
+
         // delete message
         context.deleteMessage();
     }
@@ -96,7 +110,7 @@ Thanks dear ${context.message.from.first_name}!
         // warm
         context.telegram.kickChatMember(context.message.chat.id, member.id);
         context.deleteMessage();
-        warn(context, this.database);
+        warn(context, this.database, context.message.from.id);
     }
     member_add_me(context, member) {
         // check handler condition (joined bot and me)

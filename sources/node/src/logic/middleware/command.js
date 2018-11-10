@@ -227,7 +227,11 @@ Incorrect password!
 
         // warn message sender
         if ("reply_to_message" in context.message) {
-            warn(context, this.database);
+            warn(
+                context,
+                this.database,
+                context.message.reply_to_message.from.id
+            );
         } else {
             context.reply(`
 Please reply the member message to warn!
@@ -247,7 +251,11 @@ Please reply the member message to warn!
 
         // unwarn message sender
         if ("reply_to_message" in context.message) {
-            unwarn(context, this.database);
+            unwarn(
+                context,
+                this.database,
+                context.message.reply_to_message.from.id
+            );
         } else {
             context.reply(`
 Please reply the member message to unwarn!

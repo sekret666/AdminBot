@@ -1,13 +1,49 @@
-exports.warn = (context, database) => {
-    // warn => context.message.reply_to_message.from.id;
-    // add warn
-    // message reply warns number
-    // remove if 3
-    // send warn message reply
-    // check parent exists in group => else remove parent item from group table database
-    // context message is removed !!!
+const warn = (context, database, id) => {
+    // check id is exists
+    try {
+        context.telegram.getChatMember(context.message.chat.id, id);
+    } catch (error) {
+        return;
+    }
+
+    // add warns
+    let warns = database.get_warns(context.message.chat.id, id);
+    if (warns <= 2) {
+        warns++;
+        database.set_warns(context.message.chat.id, id, warns);
+    }
+
+    // send warn message
+    context.reply(`
+Warns number ${id}: ${warns} of 3
+    `);
+
+    // check kick warn
+    if (warns >= 3) {
+        context.telegram.kickChatMember(context.message.chat.id, id);
+
+        // warn parent
+        warn(
+            context,
+            database,
+            database.get_parent(context.message.chat.id, id)
+        );
+    }
 };
 
-exports.unwarn = (context, database) => {
-    // warn => context.message.reply_to_message.from.id;
+const unwarn = (context, database, id) => {
+    // remove warns
+    let warns = database.get_warns(context.message.chat.id, id);
+    if (warn >= 1) {
+        warns--;
+        database.set_warns(context.message.chat.id, id, warns);
+    }
+
+    // send warn message
+    context.reply(`
+Warns number ${id}: ${warns} of 3
+    `);
 };
+
+exports.warn = warn;
+exports.unwarn = unwarn;
