@@ -47,6 +47,7 @@ function setDatabaseScheme() {
     Group.belongsToMany(User, {through: UserGroup})
 
     User.hasMany(User, {as: 'Childs'})
+    User.belongsTo(User)
 
     Spam.belongsToMany(Group, {through: "SpamGroup"})
     Group.belongsToMany(Spam, {through: "SpamGroup"})
