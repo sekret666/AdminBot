@@ -5,6 +5,7 @@ exports.warn = (context, database) => {
     // remove if 3
     // send warn message reply
     // check parent exists in group => else remove parent item from group table database
+    // context message is removed !!!
 };
 
 exports.unwarn = (context, database) => {

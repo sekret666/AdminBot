@@ -1,4 +1,5 @@
 const Composer = require("telegraf/composer");
+const { warn, unwarn } = require("../utils.js");
 
 class Message extends Composer {
     constructor(database) {
@@ -8,16 +9,29 @@ class Message extends Composer {
         this.database = database;
 
         // init middlewares
-        this.use(this.spam_handler);
-        this.use(this.flood_handler);
+        this.use(this.spam_handler.bind(this));
+        this.use(this.flood_handler.bind(this));
     }
 
     async spam_handler(context, next) {
-        next();
+        console.log(context.message);
+        // check handler condition (text or caption has spam words of group)
+        let words = (context.message.text || "")
+            .split(" ")
+            .concat((context.message.caption || "").split(" "));
+        if (!this.database.has_spam(context.message.chat.id, words)) {
+            return next();
+        }
+
+        // delete message
+        // warn
+        context.deleteMessage();
+        warn(context, this.database);
     }
 
     async flood_handler(context, next) {
-        next();
+        // not implemented yet!
+        return next();
     }
 }
 
