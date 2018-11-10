@@ -13,6 +13,9 @@ class Bot {
         // init bot critical middlewares
         // this.bot.use(Telegraf.log());
         // this.bot.use(TelegrafSession(options));
+        this.bot.catch(error => {
+            console.error(`Bot error: ${error}`);
+        });
     }
 
     init() {

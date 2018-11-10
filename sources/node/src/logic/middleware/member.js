@@ -9,119 +9,66 @@ class Member extends Composer {
         this.database = database;
 
         // init middlewares
-        this.on("new_chat_members", (context, next) => {
-            // iterate joined members and call handler
-            for (let member of context.message.new_chat_members) {
-                this.join_member_handler_admin_member.call(
-                    this,
-                    context,
-                    this.join_member_handler_admin_bot.bind(this),
-                    member
-                );
-            }
-        });
-        this.on("new_chat_members", (context, next) => {
-            // iterate joined members and call handler
-            for (let member of context.message.new_chat_members) {
-                this.join_member_handler_admin_bot.call(
-                    this,
-                    context,
-                    this.join_member_handler_admin_me.bind(this),
-                    member
-                );
-            }
-        });
-        this.on("new_chat_members", (context, next) => {
-            // iterate joined members and call handler
-            for (let member of context.message.new_chat_members) {
-                this.join_member_handler_admin_me.call(
-                    this,
-                    context,
-                    this.join_member_handler_member_member.bind(this),
-                    member
-                );
-            }
-        });
-        this.on("new_chat_members", (context, next) => {
-            // iterate joined members and call handler
-            for (let member of context.message.new_chat_members) {
-                this.join_member_handler_member_member.call(
-                    this,
-                    context,
-                    this.join_member_handler_member_bot.bind(this),
-                    member
-                );
-            }
-        });
-        this.on("new_chat_members", (context, next) => {
-            // iterate joined members and call handler
-            for (let member of context.message.new_chat_members) {
-                this.join_member_handler_member_bot.call(
-                    this,
-                    context,
-                    this.join_member_handler_member_me.bind(this),
-                    member
-                );
-            }
-        });
-        this.on("new_chat_members", (context, next) => {
-            // iterate joined members and call handler
-            for (let member of context.message.new_chat_members) {
-                this.join_member_handler_member_me.call(
-                    this,
-                    context,
-                    null,
-                    member
-                );
-            }
-        });
+        this.on("new_chat_members", this.join_member_handler_admin.bind(this));
+        this.on("new_chat_members", this.join_member_handler_member.bind(this));
 
-        this.on("left_chat_member", (context, next) => {
-            this.left_member_handler.call(
-                this,
-                context,
-                next,
-                context.message.left_chat_member
-            );
-        });
+        this.on("left_chat_member", this.left_member_handler.bind(this));
     }
 
-    async join_member_handler_admin_member(context, next) {
-        // check handler condition (is admin and joined member)
-        if (
-            !(this.database.is_admin(context.message.from.id) && !member.is_bot)
-        ) {
+    async join_member_handler_admin(context, next) {
+        // check handler condition (is admin)
+        if (!this.database.is_admin(context.message.from.id)) {
             return next();
+        }
+
+        // iterate joined members and call handler
+        for (let member of context.message.new_chat_members) {
+            this.admin_add_member.call(this, context, member);
+            this.admin_add_bot.call(this, context, member);
+            this.admin_add_me.call(this, context, member);
+        }
+    }
+    async join_member_handler_member(context, next) {
+        // check handler condition (is member)
+        if (this.database.is_admin(context.message.from.id)) {
+            return next();
+        }
+
+        // iterate joined members and call handler
+        for (let member of context.message.new_chat_members) {
+            this.member_add_member.call(this, context, member);
+            this.member_add_bot.call(this, context, member);
+            this.member_add_me.call(this, context, member);
+        }
+    }
+
+    async left_member_handler(context, next) {
+        // delete message
+        context.deleteMessage();
+    }
+
+    admin_add_member(context, member) {
+        // check handler condition (joined member)
+        if (member.is_bot) {
+            return;
         }
 
         // delete message
         context.deleteMessage();
     }
-    async join_member_handler_admin_bot(context, next, member) {
-        // check handler condition (is admin and joined bot and not me)
-        if (
-            !(
-                this.database.is_admin(context.message.from.id) &&
-                member.is_bot &&
-                !process.env.BOT_TOKEN.includes(member.id)
-            )
-        ) {
-            return next();
+    admin_add_bot(context, member) {
+        // check handler condition (joined bot and not me)
+        if (!(member.is_bot && !process.env.BOT_TOKEN.includes(member.id))) {
+            return;
         }
 
         // delete message
         context.deleteMessage();
     }
-    async join_member_handler_admin_me(context, next, member) {
-        // check handler condition (is admin and joined bot and me)
-        if (
-            !(
-                this.database.is_admin(context.message.from.id) &&
-                member.is_bot &&
-                process.env.BOT_TOKEN.includes(member.id)
-            )
-        ) {
-            return next();
+    admin_add_me(context, member) {
+        // check handler condition (joined bot and me)
+        if (!(member.is_bot && process.env.BOT_TOKEN.includes(member.id))) {
+            return;
         }
 
         // say thanks
@@ -129,30 +76,19 @@ class Member extends Composer {
 Thanks dear ${context.message.from.first_name}! 
         `);
     }
-    async join_member_handler_member_member(context, next, member) {
-        // check handler condition (is member and joined member)
-        if (
-            !(
-                !this.database.is_admin(context.message.from.id) &&
-                !member.is_bot
-            )
-        ) {
-            return next();
+    member_add_member(context, member) {
+        // check handler condition (joined member)
+        if (member.is_bot) {
+            return;
         }
 
         // delete message
         context.deleteMessage();
     }
-    async join_member_handler_member_bot(context, next, member) {
-        // check handler condition (is member and joined bot and not me)
-        if (
-            !(
-                !this.database.is_admin(context.message.from.id) &&
-                member.is_bot &&
-                !process.env.BOT_TOKEN.includes(member.id)
-            )
-        ) {
-            return next();
+    member_add_bot(context, member) {
+        // check handler condition (joined bot and not me)
+        if (!(member.is_bot && !process.env.BOT_TOKEN.includes(member.id))) {
+            return;
         }
 
         // remove bot
@@ -162,20 +98,10 @@ Thanks dear ${context.message.from.first_name}!
         context.deleteMessage();
         warn(context, this.database);
     }
-    async join_member_handler_member_me(context, next, member) {
-        // check handler condition (is member and joined bot and me)
-        if (
-            !(
-                !this.database.is_admin(context.message.from.id) &&
-                member.is_bot &&
-                process.env.BOT_TOKEN.includes(member.id)
-            )
-        ) {
-            if (next != null) {
-                return next();
-            } else {
-                return;
-            }
+    member_add_me(context, member) {
+        // check handler condition (joined bot and me)
+        if (!(member.is_bot && process.env.BOT_TOKEN.includes(member.id))) {
+            return;
         }
 
         // say sorry
@@ -185,11 +111,6 @@ Sorry dear ${context.message.from.first_name}!
 Only my administrators can add me to groups or channels...
         `);
         context.leaveChat();
-    }
-
-    async left_member_handler(context, next, member) {
-        // delete message
-        context.deleteMessage();
     }
 }
 
