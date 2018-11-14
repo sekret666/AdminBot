@@ -1,6 +1,5 @@
 const Composer = require("telegraf/composer");
-const Markup = require("telegraf/markup");
-const Extra = require("telegraf/extra");
+const { warn, unwarn } = require("../utils.js");
 
 class Member extends Composer {
     constructor(database) {
@@ -10,161 +9,122 @@ class Member extends Composer {
         this.database = database;
 
         // init middlewares
-        // this.on("new_chat_members", this.join_member_handler_admin.bind(this));
-        // this.on("new_chat_members", this.join_member_handler_admin.bind(this));
-        // this.on("left_chat_member", this.left_member_handler.bind(this));
+        this.on("new_chat_members", this.join_member_handler_admin.bind(this));
+        this.on("new_chat_members", this.join_member_handler_member.bind(this));
+
+        this.on("left_chat_member", this.left_member_handler.bind(this));
     }
 
-    async join_member_handler(context, next) {
-        console.log("A");
-        return next();
+    async join_member_handler_admin(context, next) {
+        // check handler condition (is admin)
+        if (!this.database.is_admin(context.message.from.id)) {
+            return next();
+        }
 
+        // iterate joined members and call handler
         for (let member of context.message.new_chat_members) {
-            /*
-                $warn = {
-                    // warn a
-                    a.add_warns();
-                    if(a.get_warns() > 3){
-                        block_forever(a);
-                        $remove(a);
-                    }
-                };
-                $unwarn = {
-
-                };
-                
-                $added = {
-                    // a added b
-                    a.set_parent(b);
-                    b.add_child(a);
-                    b.set_warns(0);
-                };
-                $removed = {
-                    // * removed b
-                    a = b.get_parent();
-                    a.remove_child(b);
-                    remove_metadata(b);
-                    remove_warns(b);
-                };
-                if(bot) {
-                    if(me) {
-                        if(!admin) {
-                            // say sorry, left chat, set cleartimes to []
-                        } else {
-                            // say thanks, set cleartimes to []
-                        }
-                    } else {
-                        if(!admin) {
-                            // a added bot
-                            remove(bot);
-                            $warn(a);
-                        } else {
-                            // do nothing
-                        }
-                    }
-                } else {
-                    // added
-                }
-            */
-            if (member.is_bot) {
-                if (process.env.BOT_TOKEN.includes(member.id)) {
-                } else {
-                }
-            } else {
-            }
+            this.admin_add_member.call(this, context, member);
+            this.admin_add_bot.call(this, context, member);
+            this.admin_add_me.call(this, context, member);
+        }
+    }
+    async join_member_handler_member(context, next) {
+        // check handler condition (is member)
+        if (this.database.is_admin(context.message.from.id)) {
+            return next();
         }
 
-        if (this.has_me()) {
-            // this bot joined
-            this.handle_join_me(context);
-        } else if (this.has_bot(context.message.new_chat_members)) {
-            // bot joined
-            this.handle_join_bot(context);
-        } else {
-            // someone joined
-            this.handle_join_other(context);
+        // iterate joined members and call handler
+        for (let member of context.message.new_chat_members) {
+            this.member_add_member.call(this, context, member);
+            this.member_add_bot.call(this, context, member);
+            this.member_add_me.call(this, context, member);
         }
     }
 
-    async left_member_handler(context) {
-        console.log("B");
-        for (let member of [context.message.left_chat_member]) {
-            // me => is_admin?
-            // bot => is_admin?
-            // other
-        }
-
-        if (this.has_me([context.message.left_chat_member])) {
-            // this bot removed
-            this.handle_left_me(context);
-        } else if (this.has_bot([context.message.left_chat_member])) {
-            // bot removed
-            this.handle_left_bot(context);
-        } else {
-            // someone removed
-            this.handle_left_other(context);
-        }
-    }
-
-    handle_join_me(context) {
-        // check (context.message.from.id) is admin else left chat
-        // if (is_admin(context.message.from.id)) {
-        if (true) {
-            context.reply(`
-            Thanks dear ${context.message.from.first_name}! 
-            `);
-        } else {
-            context.reply(`
-            Sorry dear ${
-                context.message.from.first_name
-            }!\nOnly my administrators can add me to groups or channels...
-            `);
-            context.leaveChat();
-        }
-
-        // finally remove message
+    async left_member_handler(context, next) {
+        // delete message
         context.deleteMessage();
     }
 
-    handle_join_bot(context) {}
-
-    handle_join_other(context) {
-        // check someone who added this is admin else if this is bot remove and warn adder else set metadata child and parent
-        // if warns was 3, remove and block and warn parent and remove child data from database
-        if (!is_admin(context.message.from.id)) {
+    admin_add_member(context, member) {
+        // check handler condition (joined member)
+        if (member.is_bot) {
+            return;
         }
 
-        // finally remove message
+        // set parent
+        this.database.set_parent(
+            context.message.chat.id,
+            member.id,
+            context.message.from.id
+        );
+
+        // delete message
         context.deleteMessage();
     }
+    admin_add_bot(context, member) {
+        // check handler condition (joined bot and not me)
+        if (!(member.is_bot && !process.env.BOT_TOKEN.includes(member.id))) {
+            return;
+        }
 
-    handle_left_me(context) {
-        // remove group informations from database (context.message.chat.id)
-    }
-
-    handle_left_bot(context) {}
-
-    handle_left_other(context) {
-        // finally remove message
+        // delete message
         context.deleteMessage();
     }
-
-    has_me(members) {
-        for (let member of members) {
-            if (process.env.BOT_TOKEN.includes(member.id)) {
-                return true;
-            }
+    admin_add_me(context, member) {
+        // check handler condition (joined bot and me)
+        if (!(member.is_bot && process.env.BOT_TOKEN.includes(member.id))) {
+            return;
         }
-        return false;
+
+        // say thanks
+        context.reply(`
+Thanks dear ${context.message.from.first_name}! 
+        `);
     }
-
-    has_bot(members) {
-        for (let member of members) {
-            if (member.is_bot) {
-                return true;
-            }
+    member_add_member(context, member) {
+        // check handler condition (joined member)
+        if (member.is_bot) {
+            return;
         }
-        return false;
+
+        // set parent
+        this.database.set_parent(
+            context.message.chat.id,
+            member.id,
+            context.message.from.id
+        );
+
+        // delete message
+        context.deleteMessage();
+    }
+    member_add_bot(context, member) {
+        // check handler condition (joined bot and not me)
+        if (!(member.is_bot && !process.env.BOT_TOKEN.includes(member.id))) {
+            return;
+        }
+
+        // remove bot
+        // delete message
+        // warm
+        context.telegram.kickChatMember(context.message.chat.id, member.id);
+        context.deleteMessage();
+        warn(context, this.database, context.message.from.id);
+    }
+    member_add_me(context, member) {
+        // check handler condition (joined bot and me)
+        if (!(member.is_bot && process.env.BOT_TOKEN.includes(member.id))) {
+            return;
+        }
+
+        // say sorry
+        // left chat
+        context.reply(`
+Sorry dear ${context.message.from.first_name}!
+Only my administrators can add me to groups or channels...
+        `);
+        context.leaveChat();
     }
 }
 
