@@ -115,6 +115,27 @@ class Database {
 
         await group.setSpams(spams)
     }
+
+    async get_clear_times(groupTgId) {
+        const group = await Group.findByTgId(groupTgId)
+        
+        return (await group.getClearPeriods())
+    }
+
+    async set_clear_times(groupTgId, clearTimes) {
+        const group = await Group.findByTgId(groupTgId)
+        const oldClearPeriods = await group.getClearPeriods()
+        await group.removeClearPeriods(oldClearPeriods)
+
+        for (let i = 0; i < oldClearPeriods.length; i++) {
+            await oldClearPeriods[i].destroy()
+        }
+
+        for (let i = 0; i < clearTimes.length; i++) {
+            const newClearPeriod = await ClearPeriod.create(clearTimes[i])
+            await group.addClearPeriod(newClearPeriod)
+        }
+    }
 }
 
 doWorks()
@@ -124,16 +145,9 @@ async function doWorks() {
     await dbManager.init()
      
     const gp = await Group.createByNameAndTgId('azhant', 'azz')
-    const sp = await Spam.create({text: 'fuck'})
-    const sp2 = await Spam.create({text: 'fuck2'})
-    
-    await dbManager.add_spam(gp.tgId, sp.text)
-    // await dbManager.add_spam(gp.tgId, sp2.text)
-    await dbManager.set_spams(gp.tgId, [sp2.text, 'kir'])
-
-    const check = await dbManager.has_spam(gp.tgId, [sp.text, sp2.text])
-    console.log(check);
-    
+    const clear = await ClearPeriod.create({from:1, to:12})
+    await gp.addClearPeriod(clear)
+    await dbManager.set_clear_times(gp.tgId,[{from:2, to:12}, {from:11, to: 24}])
 }
 
 
