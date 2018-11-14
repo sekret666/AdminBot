@@ -265,6 +265,8 @@ class Database {
     }
     
     async set_parent(groupTgId, childTgId, parentTgId) {
+        await this.find_or_create_group(groupTgId)
+
         await ParentChildInGroup.destroy({
             where: {
                 groupTgId: groupTgId,
@@ -278,51 +280,20 @@ class Database {
             parentTgId: parentTgId
         })
     }
+
+    async find_or_create_group(groupId) {
+        const [group,_] = await Group.findOrCreate({
+            where: {
+                tgId: groupId
+            }
+        })
+
+        return group
+    }
 }
-
-doWorks()
-
-async function doWorks() {
-    const dbManager = new Database()
-    await dbManager.init()
-     
-    const gp = await Group.create({tgId: 'azz'})
-    await dbManager.add_spam(gp.tgId, 'telegram')
-    await dbManager.add_global_spam('aaa')
-    await dbManager.add_global_spam('bbbb')
-    await dbManager.set_global_spams(['salam', 'pauvl'])
-    const gsp = await dbManager.get_global_spams()
-    
-    await ParentChildInGroup.create({
-        parentTgId: 'kamal',
-        childTgId: 'akbar',
-        groupTgId: 'azhant'
-    })
-
-    await ParentChildInGroup.create({
-        parentTgId: 'kamal',
-        childTgId: 'akbar',
-        groupTgId: 'azhant2'
-    })
-
-    await dbManager.set_parent('azhant', 'akbar', 'kmax')
-    const p = await dbManager.get_parent('azhant', 'akbar')
-    console.log(p);
-    
-}
-
 
 function getDatabaseConfig() {
     return JSON.parse(fs.readFileSync(dbConfigFilePath));
 }
 
-function getMethods(obj)
-{
-    var res = [];
-    for(var m in obj) {
-        if(typeof obj[m] == "function") {
-            res.push(m)
-        }
-    }
-    return res;
-}
+exports.Database = Database;
