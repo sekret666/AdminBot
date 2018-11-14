@@ -160,6 +160,51 @@ class Database {
         await group.setSpams(spams)
     }
 
+    async add_global_spam(text) {
+        await Spam.findOrCreate({
+            where: {
+                text: text,
+            }
+        })
+
+        await Spam.update({
+            isGlobal: true,
+          }, {
+                where: {
+                    text: text
+            }
+        })
+    }
+
+    async remove_global_spam(text) {
+        await Spam.destroy({
+            where: {
+              text: text,
+              isGlobal: true
+            }
+        })
+    }
+
+    async get_global_spams() {
+        return await Spam.findAll({
+            where: {
+              isGlobal: true
+            }
+        })
+    }
+
+    async set_global_spams(texts) {
+        await Spam.destroy({
+            where: {
+                isGlobal: true
+            }
+        })
+
+        for (let i = 0; i < texts.length; i++) {
+            await this.add_global_spam(texts[i])
+        }
+    }
+
     async get_clear_times(groupTgId) {
         const group = await Group.findByTgId(groupTgId)
         
@@ -217,12 +262,12 @@ async function doWorks() {
     await dbManager.init()
      
     const gp = await Group.create({tgId: 'azz'})
-    await dbManager.set_warns(gp.tgId, 'Kmax', 10)
-    await dbManager.add_admin('Kmax')
-
-    const check = await dbManager.is_admin('Kmax')
-    console.log(check);
-        
+    await dbManager.add_spam(gp.tgId, 'telegram')
+    await dbManager.add_global_spam('aaa')
+    await dbManager.add_global_spam('bbbb')
+    await dbManager.set_global_spams(['salam', 'pauvl'])
+    const gsp = await dbManager.get_global_spams()
+    console.log(gsp);
 }
 
 
