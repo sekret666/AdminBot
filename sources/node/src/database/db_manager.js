@@ -103,7 +103,11 @@ class Database {
         const group = await Group.findByTgId(groupTgId)
         const spam = await Spam.findByText(text)
 
-        return (await group.hasSpam(spam))
+        if (group == null) {
+            return false
+        }
+
+        return (await group.hasSpam(spam)) || (await this.is_global_spam(text))
     }
 
     async has_spam(groupTgId, texts) {
@@ -173,6 +177,21 @@ class Database {
                     text: text
             }
         })
+    }
+
+    async is_global_spam(text) {
+        const spam = await Spam.findOne({
+            where: {
+                text: text,
+                isGlobal: true
+            }
+        })
+
+        if (spam != null) {
+            return true
+        }
+
+        return false
     }
 
     async remove_global_spam(text) {
