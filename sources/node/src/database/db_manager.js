@@ -6,6 +6,7 @@ const UserModel = require(__dirname + '/user')
 const GroupModel = require(__dirname + '/group')
 const SpamModel = require(__dirname + '/spam')
 const ClearPeriodModel = require(__dirname + '/clear_period')
+const ParentChildInGroupModel = require(__dirname + '/parent_child_in_group')
 
 const dbDialect = 'sqlite'
 const dbPath = __dirname + '/db/tgDB.sqlite'
@@ -25,6 +26,7 @@ const User = UserModel.createModel(sequelize, Sequelize)
 const Group = GroupModel.createModel(sequelize, Sequelize)
 const Spam = SpamModel.createModel(sequelize, Sequelize)
 const ClearPeriod = ClearPeriodModel.createModel(sequelize, Sequelize)
+const ParentChildInGroup = ParentChildInGroupModel.createModel(sequelize, Sequelize)
 
 let _created = false
 
@@ -45,9 +47,6 @@ class Database {
         
         User.belongsToMany(Group, {through: UserGroup})
         Group.belongsToMany(User, {through: UserGroup})
-    
-        User.hasMany(User, {as: 'Childs'})
-        User.belongsTo(User)
     
         Spam.belongsToMany(Group, {through: "SpamGroup"})
         Group.belongsToMany(Spam, {through: "SpamGroup"})
@@ -253,6 +252,32 @@ class Database {
             through: {warnsNumber:  warnsNum}
         })
     }
+
+    async get_parent(groupTgId, childTgId) {
+        const result = await ParentChildInGroup.findOne({
+            where: {
+                groupTgId: groupTgId,
+                childTgId: childTgId
+            }
+        })
+
+        return result.parentTgId
+    }
+    
+    async set_parent(groupTgId, childTgId, parentTgId) {
+        await ParentChildInGroup.destroy({
+            where: {
+                groupTgId: groupTgId,
+                childTgId: childTgId
+            }
+        })
+
+        await ParentChildInGroup.create({
+            groupTgId: groupTgId,
+            childTgId: childTgId,
+            parentTgId: parentTgId
+        })
+    }
 }
 
 doWorks()
@@ -267,7 +292,23 @@ async function doWorks() {
     await dbManager.add_global_spam('bbbb')
     await dbManager.set_global_spams(['salam', 'pauvl'])
     const gsp = await dbManager.get_global_spams()
-    console.log(gsp);
+    
+    await ParentChildInGroup.create({
+        parentTgId: 'kamal',
+        childTgId: 'akbar',
+        groupTgId: 'azhant'
+    })
+
+    await ParentChildInGroup.create({
+        parentTgId: 'kamal',
+        childTgId: 'akbar',
+        groupTgId: 'azhant2'
+    })
+
+    await dbManager.set_parent('azhant', 'akbar', 'kmax')
+    const p = await dbManager.get_parent('azhant', 'akbar')
+    console.log(p);
+    
 }
 
 
