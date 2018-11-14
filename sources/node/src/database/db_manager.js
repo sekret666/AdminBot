@@ -290,15 +290,11 @@ class Database {
             }
         });
 
-<<<<<<< HEAD
         if (result == null) {
             return null
         }
 
         return result.parentTgId
-=======
-        return (result || {}).parentTgId;
->>>>>>> d0dc4b1645b95f1a5a73c79f6eb47bac6a45d26b
     }
 
     async set_parent(groupTgId, childTgId, parentTgId) {
