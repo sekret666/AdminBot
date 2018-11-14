@@ -261,6 +261,10 @@ class Database {
             }
         })
 
+        if (result == null) {
+            return null
+        }
+
         return result.parentTgId
     }
     
