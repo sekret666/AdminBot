@@ -69,8 +69,10 @@ class Command extends Composer {
             return next();
         }
 
-        context.reply(`
-Hi dear ${context.message.from.first_name}!
+        context.replyWithMarkdown(`
+Hi dear [${context.message.from.first_name}](tg://user?id=${
+            context.message.from.id
+        })!
 click /help
         `);
     }
