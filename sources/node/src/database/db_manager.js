@@ -53,7 +53,7 @@ class Database {
     
         Group.hasMany(ClearPeriod)
         
-        await sequelize.sync({force: true})
+        await sequelize.sync()
         _created = true
     }
 
