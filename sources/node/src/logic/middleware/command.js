@@ -69,8 +69,10 @@ class Command extends Composer {
             return next();
         }
 
-        context.reply(`
-Hi dear ${context.message.from.first_name}!
+        context.replyWithMarkdown(`
+Hi dear [${context.message.from.first_name}](tg://user?id=${
+            context.message.from.id
+        })!
 click /help
         `);
     }
@@ -80,7 +82,7 @@ click /help
         if (
             !(
                 context.message.chat.type === "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -99,7 +101,7 @@ Supported private admin commands:
         if (
             !(
                 context.message.chat.type === "private" &&
-                !this.database.is_admin(context.message.from.id)
+                !(await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -117,7 +119,7 @@ Supported private member commands:
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -137,7 +139,7 @@ Supported public admin commands:
         if (
             !(
                 context.message.chat.type !== "private" &&
-                !this.database.is_admin(context.message.from.id)
+                !(await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -155,7 +157,7 @@ Supported public member commands:
         if (
             !(
                 context.message.chat.type !== "private" &&
-                !this.database.is_admin(context.message.from.id)
+                !(await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -163,7 +165,7 @@ Supported public member commands:
 
         if ("reply_to_message" in context.message) {
             // report message to admins
-            for (let admin_id of this.database.get_admins()) {
+            for (let admin_id of await this.database.get_admins()) {
                 // report, the reporter message
                 context.telegram.forwardMessage(
                     admin_id,
@@ -194,7 +196,7 @@ Please reply a message to report!
         if (
             !(
                 context.message.chat.type === "private" &&
-                !this.database.is_admin(context.message.from.id)
+                !(await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -202,7 +204,7 @@ Please reply a message to report!
 
         // register with password
         if (context.message.text.includes(process.env.BOT_PASSWORD)) {
-            this.database.add_admin(context.message.from.id);
+            await this.database.add_admin(context.message.from.id);
 
             context.reply(`
 Register was successful!
@@ -219,7 +221,7 @@ Incorrect password!
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -243,7 +245,7 @@ Please reply the member message to warn!
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -268,56 +270,66 @@ Please reply the member message to unwarn!
         if (
             !(
                 context.message.chat.type === "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
         }
 
-        // global learn word
-        let spam_word = context.message.text.replace(
-            /^\/learn@?[a-zA-Z]* /,
-            ""
-        );
-        if (spam_word !== "") {
-            this.database.add_global_spam(spam_word);
-
-            context.reply(`
-Word learned!
-            `);
+        // check in reply of message
+        let spam_words = [];
+        if ("reply_to_message" in context.message) {
+            // reply learn
+            spam_words = context.message.reply_to_message.text
+                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .split(" ");
         } else {
-            context.reply(`
-Please enter a word to global learn!
-            `);
+            // local group learn word
+            spam_words = context.message.text
+                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .split(" ");
         }
+
+        // global learn all words
+        for (let word of spam_words) {
+            await this.database.add_global_spam(word);
+        }
+        context.reply(`
+Words globally learned!
+        `);
     }
     async learn_handler_public_admin(context, next) {
         // check handler condition (is public and admin)
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
         }
 
-        // local group learn word
-        let spam_word = context.message.text.replace(
-            /^\/learn@?[a-zA-Z]* /,
-            ""
-        );
-        if (spam_word !== "") {
-            this.database.add_spam(context.message.chat.id, spam_word);
-
-            context.reply(`
-Word learned!
-            `);
+        // check in reply of message
+        let spam_words = [];
+        if ("reply_to_message" in context.message) {
+            // reply learn
+            spam_words = context.message.reply_to_message.text
+                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .split(" ");
         } else {
-            context.reply(`
-Please enter a word to local learn!
-            `);
+            // local group learn word
+            spam_words = context.message.text
+                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .split(" ");
         }
+
+        // learn all words
+        for (let word of spam_words) {
+            await this.database.add_spam(context.message.chat.id, word);
+        }
+        context.reply(`
+Words learned!
+        `);
     }
 
     async unlearn_handler_private_admin(context, next) {
@@ -325,56 +337,66 @@ Please enter a word to local learn!
         if (
             !(
                 context.message.chat.type === "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
         }
 
-        // global unlearn word
-        let spam_word = context.message.text.replace(
-            /^\/learn@?[a-zA-Z]* /,
-            ""
-        );
-        if (spam_word !== "") {
-            this.database.remove_global_spam(spam_word);
-
-            context.reply(`
-Word unlearned!
-            `);
+        // check in reply of message
+        let spam_words = [];
+        if ("reply_to_message" in context.message) {
+            // reply learn
+            spam_words = context.message.reply_to_message.text
+                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .split(" ");
         } else {
-            context.reply(`
-Please enter a word to global unlearn!
-            `);
+            // local group learn word
+            spam_words = context.message.text
+                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .split(" ");
         }
+
+        // unlearn global all words
+        for (let word of spam_words) {
+            await this.database.remove_global_spam(word);
+        }
+        context.reply(`
+Words globally unlearned!
+        `);
     }
     async unlearn_handler_public_admin(context, next) {
         // check handler condition (is public and admin)
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
         }
 
-        // local group unlearn word
-        let spam_word = context.message.text.replace(
-            /^\/learn@?[a-zA-Z]* /,
-            ""
-        );
-        if (spam_word !== "") {
-            this.database.remove_spam(context.message.chat.id, spam_word);
-
-            context.reply(`
-Word unlearned!
-            `);
+        // check in reply of message
+        let spam_words = [];
+        if ("reply_to_message" in context.message) {
+            // reply learn
+            spam_words = context.message.reply_to_message.text
+                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .split(" ");
         } else {
-            context.reply(`
-Please enter a word to local unlearn!
-            `);
+            // local group learn word
+            spam_words = context.message.text
+                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .split(" ");
         }
+
+        // unlearn all words
+        for (let word of spam_words) {
+            await this.database.remove_spam(context.message.chat.id, word);
+        }
+        context.reply(`
+Words unlearned!
+        `);
     }
 
     async unsupport_handler(context, next) {
