@@ -1,9 +1,9 @@
 const { Bot } = require("./logic/bot.js");
-const { Database } = require("./database/database.js");
+const { Database } = require("./database/db_manager.js");
 
 const Telegarf = require("telegraf");
 
-const start = () => {
+const start = async () => {
     // init env vars
     require("dotenv").config();
     let token = process.env.BOT_TOKEN;
@@ -19,6 +19,7 @@ const start = () => {
 
     // init database
     let database = new Database();
+    await database.init();
 
     // start bot
     let bot = new Bot(token, options, database);
@@ -26,4 +27,10 @@ const start = () => {
     bot.start();
 };
 
-start();
+start()
+    .then(result => {
+        console.log(`Bot Started`);
+    })
+    .catch(error => {
+        console.log(`Bot Error: ${error}`);
+    });

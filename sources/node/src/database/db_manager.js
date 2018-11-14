@@ -1,107 +1,112 @@
-const Sequelize = require('sequelize');
-const fs = require('fs');
+const Sequelize = require("sequelize");
+const fs = require("fs");
 
-const AdminModel = require(__dirname + '/admin')
-const UserModel = require(__dirname + '/user')
-const GroupModel = require(__dirname + '/group')
-const SpamModel = require(__dirname + '/spam')
-const ClearPeriodModel = require(__dirname + '/clear_period')
-const ParentChildInGroupModel = require(__dirname + '/parent_child_in_group')
+const AdminModel = require(__dirname + "/admin");
+const UserModel = require(__dirname + "/user");
+const GroupModel = require(__dirname + "/group");
+const SpamModel = require(__dirname + "/spam");
+const ClearPeriodModel = require(__dirname + "/clear_period");
+const ParentChildInGroupModel = require(__dirname + "/parent_child_in_group");
 
-const dbDialect = 'sqlite'
-const dbPath = __dirname + '/db/tgDB.sqlite'
-const dbConfigFilePath = __dirname + '/db/db_config.json'
-const dbConfig = getDatabaseConfig()
+const dbDialect = "sqlite";
+const dbPath = __dirname + "/db/tgDB.sqlite";
+const dbConfigFilePath = __dirname + "/db/db_config.json";
+const dbConfig = getDatabaseConfig();
 
 const sequelize = new Sequelize(
-    dbConfig.dbName, dbConfig.username, dbConfig.password, {
-        
+    dbConfig.dbName,
+    dbConfig.username,
+    dbConfig.password,
+    {
         dialect: dbDialect,
         operatorsAliases: false,
         storage: dbPath
-});
+    }
+);
 
-const Admin = AdminModel.createModel(sequelize, Sequelize)
-const User = UserModel.createModel(sequelize, Sequelize)
-const Group = GroupModel.createModel(sequelize, Sequelize)
-const Spam = SpamModel.createModel(sequelize, Sequelize)
-const ClearPeriod = ClearPeriodModel.createModel(sequelize, Sequelize)
-const ParentChildInGroup = ParentChildInGroupModel.createModel(sequelize, Sequelize)
+const Admin = AdminModel.createModel(sequelize, Sequelize);
+const User = UserModel.createModel(sequelize, Sequelize);
+const Group = GroupModel.createModel(sequelize, Sequelize);
+const Spam = SpamModel.createModel(sequelize, Sequelize);
+const ClearPeriod = ClearPeriodModel.createModel(sequelize, Sequelize);
+const ParentChildInGroup = ParentChildInGroupModel.createModel(
+    sequelize,
+    Sequelize
+);
 
-let _created = false
+let _created = false;
 
 class Database {
-
     static get created() {
-        return _created 
+        return _created;
     }
 
     async init() {
         if (Database.created) {
-            return
+            return;
         }
-        
-        const UserGroup = sequelize.define('UserGroup', {
-            warnsNumber: {type: Sequelize.INTEGER.UNSIGNED, defaultValue: 0}
-        })
-        
-        User.belongsToMany(Group, {through: UserGroup})
-        Group.belongsToMany(User, {through: UserGroup})
-    
-        Spam.belongsToMany(Group, {through: "SpamGroup"})
-        Group.belongsToMany(Spam, {through: "SpamGroup"})
-    
-        Group.hasMany(ClearPeriod)
-        
-        await sequelize.sync()
-        _created = true
+
+        const UserGroup = sequelize.define("UserGroup", {
+            warnsNumber: { type: Sequelize.INTEGER.UNSIGNED, defaultValue: 0 }
+        });
+
+        User.belongsToMany(Group, { through: UserGroup });
+        Group.belongsToMany(User, { through: UserGroup });
+
+        Spam.belongsToMany(Group, { through: "SpamGroup" });
+        Group.belongsToMany(Spam, { through: "SpamGroup" });
+
+        Group.hasMany(ClearPeriod);
+
+        await sequelize.sync();
+        _created = true;
     }
 
     async is_admin(adminTgId) {
-        const admin = await Admin.findByTgId(adminTgId) 
+        const admin = await Admin.findByTgId(adminTgId);
         if (admin != null) {
-            return true
+            return true;
         }
 
-        return false
+        return false;
     }
-    
+
     async add_admin(adminTgId) {
-        const [admin,_] = await Admin.findOrCreate({
+        const [admin, _] = await Admin.findOrCreate({
             where: {
                 tgId: adminTgId
             }
-        })
+        });
 
-        return admin
+        return admin;
     }
 
     async remove_admin(adminTgId) {
         await Admin.destroy({
             where: {
-              tgId: adminTgId
+                tgId: adminTgId
             }
-        })
+        });
     }
-    
+
     async get_admins() {
-        return (await Admin.findAll())
+        return await Admin.findAll();
     }
-    
+
     async set_admins(adminTgIds) {
-       await Admin.destroy({
+        await Admin.destroy({
             where: {},
             truncate: true
-        })
-    
+        });
+
         for (let i = 0; i < adminTgIds.length; i++) {
-            await Admin.create({tgId: adminTgIds[i]})
+            await Admin.create({ tgId: adminTgIds[i] });
         }
     }
 
     async is_spam(groupTgId, text) {
-        const group = await Group.findByTgId(groupTgId)
-        const spam = await Spam.findByText(text)
+        const group = await Group.findByTgId(groupTgId);
+        const spam = await Spam.findByText(text);
 
         if (group == null) {
             return false
@@ -113,70 +118,73 @@ class Database {
     async has_spam(groupTgId, texts) {
         for (let i = 0; i < texts.length; i++) {
             const check = await this.is_spam(groupTgId, texts[i]);
-            
+
             if (check) {
-                return true
+                return true;
             }
         }
 
-        return false
+        return false;
     }
-    
+
     async add_spam(groupTgId, text) {
-        const group = await Group.findByTgId(groupTgId)
-        const [spam,_] = await Spam.findOrCreate({
+        const group = await Group.findByTgId(groupTgId);
+        const [spam, _] = await Spam.findOrCreate({
             where: {
                 text: text
             }
-        })
+        });
 
-        await group.addSpam(spam)
+        await group.addSpam(spam);
     }
-    
+
     async remove_spam(groupTgId, text) {
-        const group = await Group.findByTgId(groupTgId)
-        const spam = await Spam.findByText(text)
+        const group = await Group.findByTgId(groupTgId);
+        const spam = await Spam.findByText(text);
 
-        await group.removeSpam(spam)
+        await group.removeSpam(spam);
     }
-    
+
     async get_spams(groupTgId) {
-        const group = await Group.findByTgId(groupTgId)
-        
-        return (await group.getSpams())
-    }
-    
-    async set_spams(groupTgId, texts) {
-        const group = await Group.findByTgId(groupTgId)
+        const group = await Group.findByTgId(groupTgId);
 
-        const spams = []
+        return await group.getSpams();
+    }
+
+    async set_spams(groupTgId, texts) {
+        const group = await Group.findByTgId(groupTgId);
+
+        const spams = [];
         for (let i = 0; i < texts.length; i++) {
-            const [spam,_] = await Spam.findOrCreate({
+            const [spam, _] = await Spam.findOrCreate({
                 where: {
                     text: texts[i]
                 }
-            })
-            
-            spams.push(spam)
+            });
+
+            spams.push(spam);
         }
 
-        await group.setSpams(spams)
+        await group.setSpams(spams);
     }
 
     async add_global_spam(text) {
         await Spam.findOrCreate({
             where: {
-                text: text,
+                text: text
             }
-        })
+        });
 
-        await Spam.update({
-            isGlobal: true,
-          }, {
+        await Spam.update(
+            {
+                isGlobal: true
+            },
+            {
                 where: {
                     text: text
+                }
             }
-        })
+        );
     }
 
     async is_global_spam(text) {
@@ -197,18 +205,18 @@ class Database {
     async remove_global_spam(text) {
         await Spam.destroy({
             where: {
-              text: text,
-              isGlobal: true
+                text: text,
+                isGlobal: true
             }
-        })
+        });
     }
 
     async get_global_spams() {
         return await Spam.findAll({
             where: {
-              isGlobal: true
+                isGlobal: true
             }
-        })
+        });
     }
 
     async set_global_spams(texts) {
@@ -216,60 +224,62 @@ class Database {
             where: {
                 isGlobal: true
             }
-        })
+        });
 
         for (let i = 0; i < texts.length; i++) {
-            await this.add_global_spam(texts[i])
+            await this.add_global_spam(texts[i]);
         }
     }
 
     async get_clear_times(groupTgId) {
-        const group = await Group.findByTgId(groupTgId)
-        
-        return (await group.getClearPeriods())
+        const group = await Group.findByTgId(groupTgId);
+
+        return await group.getClearPeriods();
     }
 
     async set_clear_times(groupTgId, clearTimes) {
-        const group = await Group.findByTgId(groupTgId)
-        const oldClearPeriods = await group.getClearPeriods()
-        await group.removeClearPeriods(oldClearPeriods)
+        const group = await Group.findByTgId(groupTgId);
+        const oldClearPeriods = await group.getClearPeriods();
+        await group.removeClearPeriods(oldClearPeriods);
 
         for (let i = 0; i < oldClearPeriods.length; i++) {
-            await oldClearPeriods[i].destroy()
+            await oldClearPeriods[i].destroy();
         }
 
         for (let i = 0; i < clearTimes.length; i++) {
-            const newClearPeriod = await ClearPeriod.create(clearTimes[i])
-            await group.addClearPeriod(newClearPeriod)
+            const newClearPeriod = await ClearPeriod.create(clearTimes[i]);
+            await group.addClearPeriod(newClearPeriod);
         }
     }
 
     async get_warns(groupTgId, userTgId) {
         const group = await Group.findOne({
-            where: {tgId: groupTgId},
-            include: [{
-                model: User,
-            }]
-        })
+            where: { tgId: groupTgId },
+            include: [
+                {
+                    model: User
+                }
+            ]
+        });
 
-        const user = group.dataValues.users.find((usr) => {
-            return usr.tgId == userTgId
-        })
+        const user = group.dataValues.users.find(usr => {
+            return usr.tgId == userTgId;
+        });
 
         if (user != undefined) {
-            return user.UserGroup.warnsNumber
+            return user.UserGroup.warnsNumber;
         }
 
-        return NaN
+        return NaN;
     }
 
     async set_warns(groupTgId, userTgId, warnsNum) {
-        const group = await Group.findByTgId(groupTgId)
-        const [user,_] = await User.findOrCreateByTgId(userTgId)
-        
+        const group = await Group.findByTgId(groupTgId);
+        const [user, _] = await User.findOrCreateByTgId(userTgId);
+
         await group.addUser(user, {
-            through: {warnsNumber:  warnsNum}
-        })
+            through: { warnsNumber: warnsNum }
+        });
     }
 
     async get_parent(groupTgId, childTgId) {
@@ -278,40 +288,44 @@ class Database {
                 groupTgId: groupTgId,
                 childTgId: childTgId
             }
-        })
+        });
 
+<<<<<<< HEAD
         if (result == null) {
             return null
         }
 
         return result.parentTgId
+=======
+        return (result || {}).parentTgId;
+>>>>>>> d0dc4b1645b95f1a5a73c79f6eb47bac6a45d26b
     }
-    
+
     async set_parent(groupTgId, childTgId, parentTgId) {
-        await this.find_or_create_group(groupTgId)
+        await this.find_or_create_group(groupTgId);
 
         await ParentChildInGroup.destroy({
             where: {
                 groupTgId: groupTgId,
                 childTgId: childTgId
             }
-        })
+        });
 
         await ParentChildInGroup.create({
             groupTgId: groupTgId,
             childTgId: childTgId,
             parentTgId: parentTgId
-        })
+        });
     }
 
     async find_or_create_group(groupId) {
-        const [group,_] = await Group.findOrCreate({
+        const [group, _] = await Group.findOrCreate({
             where: {
                 tgId: groupId
             }
-        })
+        });
 
-        return group
+        return group;
     }
 }
 
