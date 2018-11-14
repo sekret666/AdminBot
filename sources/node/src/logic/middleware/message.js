@@ -18,7 +18,7 @@ class Message extends Composer {
         let words = (context.message.text || "")
             .split(" ")
             .concat((context.message.caption || "").split(" "));
-        if (!this.database.has_spam(context.message.chat.id, words)) {
+        if (!(await this.database.has_spam(context.message.chat.id, words))) {
             return next();
         }
 

@@ -17,7 +17,7 @@ class Member extends Composer {
 
     async join_member_handler_admin(context, next) {
         // check handler condition (is admin)
-        if (!this.database.is_admin(context.message.from.id)) {
+        if (!(await this.database.is_admin(context.message.from.id))) {
             return next();
         }
 
@@ -30,7 +30,7 @@ class Member extends Composer {
     }
     async join_member_handler_member(context, next) {
         // check handler condition (is member)
-        if (this.database.is_admin(context.message.from.id)) {
+        if (await this.database.is_admin(context.message.from.id)) {
             return next();
         }
 
@@ -54,7 +54,7 @@ class Member extends Composer {
         }
 
         // set parent
-        this.database.set_parent(
+        await this.database.set_parent(
             context.message.chat.id,
             member.id,
             context.message.from.id
@@ -78,6 +78,9 @@ class Member extends Composer {
             return;
         }
 
+        // create group configs in database
+        await this.database.find_or_create_group(context.message.chat.id);
+
         // say thanks
         context.reply(`
 Thanks dear ${context.message.from.first_name}! 
@@ -90,7 +93,7 @@ Thanks dear ${context.message.from.first_name}!
         }
 
         // set parent
-        this.database.set_parent(
+        await this.database.set_parent(
             context.message.chat.id,
             member.id,
             context.message.from.id

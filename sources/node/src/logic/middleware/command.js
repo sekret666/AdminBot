@@ -80,7 +80,7 @@ click /help
         if (
             !(
                 context.message.chat.type === "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -99,7 +99,7 @@ Supported private admin commands:
         if (
             !(
                 context.message.chat.type === "private" &&
-                !this.database.is_admin(context.message.from.id)
+                !(await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -117,7 +117,7 @@ Supported private member commands:
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -137,7 +137,7 @@ Supported public admin commands:
         if (
             !(
                 context.message.chat.type !== "private" &&
-                !this.database.is_admin(context.message.from.id)
+                !(await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -155,7 +155,7 @@ Supported public member commands:
         if (
             !(
                 context.message.chat.type !== "private" &&
-                !this.database.is_admin(context.message.from.id)
+                !(await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -163,7 +163,7 @@ Supported public member commands:
 
         if ("reply_to_message" in context.message) {
             // report message to admins
-            for (let admin_id of this.database.get_admins()) {
+            for (let admin_id of await this.database.get_admins()) {
                 // report, the reporter message
                 context.telegram.forwardMessage(
                     admin_id,
@@ -194,7 +194,7 @@ Please reply a message to report!
         if (
             !(
                 context.message.chat.type === "private" &&
-                !this.database.is_admin(context.message.from.id)
+                !(await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -202,7 +202,7 @@ Please reply a message to report!
 
         // register with password
         if (context.message.text.includes(process.env.BOT_PASSWORD)) {
-            this.database.add_admin(context.message.from.id);
+            await this.database.add_admin(context.message.from.id);
 
             context.reply(`
 Register was successful!
@@ -219,7 +219,7 @@ Incorrect password!
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -243,7 +243,7 @@ Please reply the member message to warn!
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -268,7 +268,7 @@ Please reply the member message to unwarn!
         if (
             !(
                 context.message.chat.type === "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -280,7 +280,7 @@ Please reply the member message to unwarn!
             ""
         );
         if (spam_word !== "") {
-            this.database.add_global_spam(spam_word);
+            await this.database.add_global_spam(spam_word);
 
             context.reply(`
 Word learned!
@@ -296,7 +296,7 @@ Please enter a word to global learn!
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -308,7 +308,7 @@ Please enter a word to global learn!
             ""
         );
         if (spam_word !== "") {
-            this.database.add_spam(context.message.chat.id, spam_word);
+            await this.database.add_spam(context.message.chat.id, spam_word);
 
             context.reply(`
 Word learned!
@@ -325,7 +325,7 @@ Please enter a word to local learn!
         if (
             !(
                 context.message.chat.type === "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -337,7 +337,7 @@ Please enter a word to local learn!
             ""
         );
         if (spam_word !== "") {
-            this.database.remove_global_spam(spam_word);
+            await this.database.remove_global_spam(spam_word);
 
             context.reply(`
 Word unlearned!
@@ -353,7 +353,7 @@ Please enter a word to global unlearn!
         if (
             !(
                 context.message.chat.type !== "private" &&
-                this.database.is_admin(context.message.from.id)
+                (await this.database.is_admin(context.message.from.id))
             )
         ) {
             return next();
@@ -365,7 +365,7 @@ Please enter a word to global unlearn!
             ""
         );
         if (spam_word !== "") {
-            this.database.remove_spam(context.message.chat.id, spam_word);
+            await this.database.remove_spam(context.message.chat.id, spam_word);
 
             context.reply(`
 Word unlearned!

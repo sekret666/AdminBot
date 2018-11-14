@@ -1,4 +1,4 @@
-const warn = (context, database, id) => {
+const warn = async (context, database, id) => {
     // check id is exists
     try {
         context.telegram.getChatMember(context.message.chat.id, id);
@@ -7,10 +7,10 @@ const warn = (context, database, id) => {
     }
 
     // add warns
-    let warns = database.get_warns(context.message.chat.id, id);
+    let warns = await database.get_warns(context.message.chat.id, id);
     if (warns <= 2) {
         warns++;
-        database.set_warns(context.message.chat.id, id, warns);
+        await database.set_warns(context.message.chat.id, id, warns);
     }
 
     // send warn message
@@ -26,17 +26,17 @@ Warns number ${id}: ${warns} of 3
         warn(
             context,
             database,
-            database.get_parent(context.message.chat.id, id)
+            await database.get_parent(context.message.chat.id, id)
         );
     }
 };
 
 const unwarn = (context, database, id) => {
     // remove warns
-    let warns = database.get_warns(context.message.chat.id, id);
+    let warns = await database.get_warns(context.message.chat.id, id);
     if (warn >= 1) {
         warns--;
-        database.set_warns(context.message.chat.id, id, warns);
+        await database.set_warns(context.message.chat.id, id, warns);
     }
 
     // send warn message
