@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const fs = require('fs');
 
+const AdminModel = require(__dirname + '/admin')
 const UserModel = require(__dirname + '/user')
 const GroupModel = require(__dirname + '/group')
 const SpamModel = require(__dirname + '/spam')
@@ -19,6 +20,7 @@ const sequelize = new Sequelize(
         storage: dbPath
 });
 
+const Admin = AdminModel.createModel(sequelize, Sequelize)
 const User = UserModel.createModel(sequelize, Sequelize)
 const Group = GroupModel.createModel(sequelize, Sequelize)
 const Spam = SpamModel.createModel(sequelize, Sequelize)
@@ -54,6 +56,47 @@ class Database {
         
         await sequelize.sync({force: true})
         _created = true
+    }
+
+    async is_admin(adminTgId) {
+        if (Admin.findByTgID != null) {
+            return true
+        }
+
+        return false
+    }
+    
+    async add_admin(adminTgId) {
+        const [admin,_] = await Admin.findOrCreate({
+            where: {
+                tgId: adminTgId
+            }
+        })
+
+        return admin
+    }
+
+    async remove_admin(adminTgId) {
+        await Admin.destroy({
+            where: {
+              tgId: adminTgId
+            }
+        })
+    }
+    
+    async get_admins() {
+        return (await Admin.findAll())
+    }
+    
+    async set_admins(adminTgIds) {
+       await Admin.destroy({
+            where: {},
+            truncate: true
+        })
+    
+        for (let i = 0; i < adminTgIds.length; i++) {
+            await Admin.create({tgId: adminTgIds[i]})
+        }
     }
 
     async is_spam(groupTgId, text) {
@@ -171,20 +214,11 @@ async function doWorks() {
     const dbManager = new Database()
     await dbManager.init()
      
-    const gp = await Group.createByNameAndTgId('azhant', 'azz')
-    const user = await User.create({tgId:'Kmax'})
-    const user2 = await User.create({tgId:'Kmax2'})
-    
-    await gp.addUser(user)
-    await gp.addUser(user2)
-    await dbManager.set_warns(gp.tgId, user.tgId, 10)
-    await dbManager.set_warns(gp.tgId, user2.tgId, 3)
+    await dbManager.add_admin('Kmax')
+    await dbManager.add_admin('Kmax')
+    await dbManager.add_admin('Kmax3')
 
-    const warns = await dbManager.get_warns(gp.tgId, user.tgId)
-    const warns2 = await dbManager.get_warns(gp.tgId, user2.tgId)
-    
-    console.log(warns);
-    console.log(warns2);
+    await dbManager.set_admins(['kamx', 'koli'])
 }
 
 
