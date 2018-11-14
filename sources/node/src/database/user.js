@@ -5,7 +5,6 @@ exports.createModel = (sequelize, DataTypes) => {
         tgId: {type: DataTypes.STRING, unique: true},
         name: DataTypes.STRING,
         lastname: DataTypes.STRING,
-        warnsNumber: DataTypes.INTEGER.UNSIGNED
     })
 
     User.findByTgId = async function (userTgId) {

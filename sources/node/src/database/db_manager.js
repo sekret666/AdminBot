@@ -38,7 +38,7 @@ class Database {
         }
         
         const UserGroup = sequelize.define('UserGroup', {
-            isAdmin: {type: Sequelize.BOOLEAN, defaultValue: false}
+            warnsNumber: {type: Sequelize.INTEGER.UNSIGNED, defaultValue: 0}
         })
         
         User.belongsToMany(Group, {through: UserGroup})
@@ -136,6 +136,33 @@ class Database {
             await group.addClearPeriod(newClearPeriod)
         }
     }
+
+    async get_warns(groupTgId, userTgId) {
+        const group = await Group.findOne({
+            where: {tgId: groupTgId},
+            include: [{
+                model: User,
+            }]
+        })
+
+        const user = group.dataValues.users.find((usr) => {
+            return usr.tgId == userTgId
+        })
+
+        if (user != undefined) {
+            return user.UserGroup.warnsNumber
+        }
+
+        return NaN
+    }
+
+    async set_warns(groupTgId, userTgId, warnsNum) {
+        const group = await Group.findByTgId(groupTgId)
+        const user = await User.findByTgId(userTgId)
+        await group.addUser(user, {
+            through: {warnsNumber:  warnsNum}
+        })
+    }
 }
 
 doWorks()
@@ -145,9 +172,19 @@ async function doWorks() {
     await dbManager.init()
      
     const gp = await Group.createByNameAndTgId('azhant', 'azz')
-    const clear = await ClearPeriod.create({from:1, to:12})
-    await gp.addClearPeriod(clear)
-    await dbManager.set_clear_times(gp.tgId,[{from:2, to:12}, {from:11, to: 24}])
+    const user = await User.create({tgId:'Kmax'})
+    const user2 = await User.create({tgId:'Kmax2'})
+    
+    await gp.addUser(user)
+    await gp.addUser(user2)
+    await dbManager.set_warns(gp.tgId, user.tgId, 10)
+    await dbManager.set_warns(gp.tgId, user2.tgId, 3)
+
+    const warns = await dbManager.get_warns(gp.tgId, user.tgId)
+    const warns2 = await dbManager.get_warns(gp.tgId, user2.tgId)
+    
+    console.log(warns);
+    console.log(warns2);
 }
 
 
