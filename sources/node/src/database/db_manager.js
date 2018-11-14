@@ -201,7 +201,8 @@ class Database {
 
     async set_warns(groupTgId, userTgId, warnsNum) {
         const group = await Group.findByTgId(groupTgId)
-        const user = await User.findByTgId(userTgId)
+        const [user,_] = await User.findOrCreateByTgId(userTgId)
+        
         await group.addUser(user, {
             through: {warnsNumber:  warnsNum}
         })
@@ -214,9 +215,9 @@ async function doWorks() {
     const dbManager = new Database()
     await dbManager.init()
      
-    await dbManager.add_admin('Kmax')
-    await dbManager.add_admin('Kmax')
-    await dbManager.add_admin('Kmax3')
+    const gp = await Group.create({tgId: 'azz'})
+    await dbManager.set_warns(gp.tgId, 'Kmax', 10)
+
 
     await dbManager.set_admins(['kamx', 'koli'])
 }

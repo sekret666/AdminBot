@@ -7,8 +7,8 @@ exports.createModel = (sequelize, DataTypes) => {
         lastname: DataTypes.STRING,
     })
 
-    User.findByTgId = async function (userTgId) {
-        const user = await this.findOne({
+    User.findOrCreateByTgId = async function (userTgId) {
+        const user = await this.findOrCreate({
             where: {
                 tgId: userTgId
             } 
