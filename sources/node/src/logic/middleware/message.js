@@ -14,6 +14,12 @@ class Message extends Composer {
     }
 
     async spam_handler(context, next) {
+        console.log();
+        console.log();
+        console.log(context.message);
+        console.log();
+        console.log();
+
         // check handler condition (text or caption has spam words of group)
         let words = (context.message.text || "")
             .split(" ")

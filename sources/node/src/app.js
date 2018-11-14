@@ -1,5 +1,5 @@
 const { Bot } = require("./logic/bot.js");
-const { Database } = require("./database/database.js");
+const { Database } = require("./database/db_manager.js");
 
 const Telegarf = require("telegraf");
 

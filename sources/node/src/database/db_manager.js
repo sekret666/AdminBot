@@ -271,7 +271,7 @@ class Database {
             }
         });
 
-        return result.parentTgId;
+        return (result || {}).parentTgId;
     }
 
     async set_parent(groupTgId, childTgId, parentTgId) {
