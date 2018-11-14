@@ -59,7 +59,8 @@ class Database {
     }
 
     async is_admin(adminTgId) {
-        if (Admin.findByTgID != null) {
+        const admin = await Admin.findByTgId(adminTgId) 
+        if (admin != null) {
             return true
         }
 
@@ -217,9 +218,11 @@ async function doWorks() {
      
     const gp = await Group.create({tgId: 'azz'})
     await dbManager.set_warns(gp.tgId, 'Kmax', 10)
+    await dbManager.add_admin('Kmax')
 
-
-    await dbManager.set_admins(['kamx', 'koli'])
+    const check = await dbManager.is_admin('Kmax')
+    console.log(check);
+        
 }
 
 

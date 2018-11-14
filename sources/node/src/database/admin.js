@@ -10,7 +10,7 @@ exports.createModel = (sequelize, DataTypes) => {
     Admin.findByTgId = async function (adminTgId) {
         const admin = await this.findOne({
             where: {
-                tgId: userTgId
+                tgId: adminTgId
             } 
         })
 
