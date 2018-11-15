@@ -112,10 +112,10 @@ class Database {
         const spam = await Spam.findByText(text);
 
         if (group == null) {
-            return false
+            return false;
         }
 
-        return (await group.hasSpam(spam)) || (await this.is_global_spam(text))
+        return (await group.hasSpam(spam)) || (await this.is_global_spam(text));
     }
 
     async has_spam(groupTgId, texts) {
@@ -196,13 +196,13 @@ class Database {
                 text: text,
                 isGlobal: true
             }
-        })
+        });
 
         if (spam != null) {
-            return true
+            return true;
         }
 
-        return false
+        return false;
     }
 
     async remove_global_spam(text) {
@@ -294,7 +294,7 @@ class Database {
         });
 
         if (result == null) {
-            return null
+            return null;
         }
 
         return result.parentTgId

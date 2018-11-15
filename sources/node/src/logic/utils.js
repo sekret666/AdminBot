@@ -1,4 +1,4 @@
-const warn = async (context, database, id) => {
+const warn = async (context, database, id, number, text) => {
     // check id is exists
     try {
         await context.telegram.getChatMember(context.message.chat.id, id);
@@ -11,14 +11,17 @@ const warn = async (context, database, id) => {
     if (isNaN(warns)) {
         warns = 0;
     }
-    if (warns <= 2) {
-        warns++;
-        await database.set_warns(context.message.chat.id, id, warns);
-    }
+
+    // increase warns and set
+    warns = increase(warns, number);
+    await database.set_warns(context.message.chat.id, id, warns);
 
     // send warn message
-    context.replyWithMarkdown(`    
-User [${id}](tg://user?id=${id}) warns number: ${warns} of 3
+    context.replyWithMarkdown(`  
+Warn message:
+
+To user: [${id}](tg://user?id=${id}) (${warns} of 3)
+Reason: ${text}
     `);
 
     // check kick warn
@@ -29,26 +32,48 @@ User [${id}](tg://user?id=${id}) warns number: ${warns} of 3
         warn(
             context,
             database,
-            await database.get_parent(context.message.chat.id, id)
+            await database.get_parent(context.message.chat.id, id),
+            1,
+            "Bad child"
         );
     }
 };
 
-const unwarn = async (context, database, id) => {
+const unwarn = async (context, database, id, number, text) => {
     // remove warns
     let warns = await database.get_warns(context.message.chat.id, id);
     if (isNaN(warns)) {
         warns = 0;
     }
-    if (warns >= 1) {
-        warns--;
-        await database.set_warns(context.message.chat.id, id, warns);
-    }
+
+    // decrease warns and set
+    warns = decrease(warns, number);
+    await database.set_warns(context.message.chat.id, id, warns);
 
     // send warn message
     context.replyWithMarkdown(`    
-User [${id}](tg://user?id=${id}) warns number: ${warns} of 3
+Unwarn message:
+
+To user: [${id}](tg://user?id=${id}) (${warns} of 3)
+Reason: ${text}
     `);
+};
+
+const increase = (warns, number) => {
+    warns += number;
+    if (warns > 3) {
+        warns = 3;
+    }
+
+    return warns;
+};
+const decrease = (warns, number) => {
+    warns -= number;
+    if (warns < 0) {
+        warns = 0;
+    }
+
+    return warns;
 };
 
 exports.warn = warn;
