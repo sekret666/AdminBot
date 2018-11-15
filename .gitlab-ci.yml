@@ -1,0 +1,3 @@
+before_script:
+    - cd sources/node
+    - npm i
