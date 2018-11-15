@@ -27,12 +27,22 @@ class UnwarnCommand extends Composer {
             return next();
         }
 
+        // get optional unwarn number
+        let number = parseInt(
+            context.message.text.replace(/^\/unwarn@?[a-zA-Z]* /, "")
+        );
+        if (isNaN(number)) {
+            number = 1;
+        }
+
         // unwarn message sender
         if ("reply_to_message" in context.message) {
             unwarn(
                 context,
                 this.database,
-                context.message.reply_to_message.from.id
+                context.message.reply_to_message.from.id,
+                number,
+                "Administrator command"
             );
         } else {
             context.reply(`

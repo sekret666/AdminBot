@@ -33,12 +33,12 @@ class UnlearnCommand extends Composer {
         if ("reply_to_message" in context.message) {
             // reply learn
             spam_words = context.message.reply_to_message.text
-                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .replace(/^\/unlearn@?[a-zA-Z]* /, "")
                 .split(" ");
         } else {
             // local group learn word
             spam_words = context.message.text
-                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .replace(/^\/unlearn@?[a-zA-Z]* /, "")
                 .split(" ");
         }
 
@@ -66,12 +66,12 @@ Words globally unlearned!
         if ("reply_to_message" in context.message) {
             // reply learn
             spam_words = context.message.reply_to_message.text
-                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .replace(/^\/unlearn@?[a-zA-Z]* /, "")
                 .split(" ");
         } else {
             // local group learn word
             spam_words = context.message.text
-                .replace(/^\/learn@?[a-zA-Z]* /, "")
+                .replace(/^\/unlearn@?[a-zA-Z]* /, "")
                 .split(" ");
         }
 

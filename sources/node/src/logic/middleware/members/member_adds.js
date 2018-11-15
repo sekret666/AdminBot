@@ -53,7 +53,7 @@ class MemberAddsMember extends Composer {
         // warm
         context.telegram.kickChatMember(context.message.chat.id, member.id);
         context.deleteMessage();
-        warn(context, this.database, context.message.from.id);
+        warn(context, this.database, context.message.from.id, 1, "Add bot");
     }
     async adds_me(context, member) {
         // check handler condition (joined bot and me)

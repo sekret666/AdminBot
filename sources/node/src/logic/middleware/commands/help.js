@@ -38,8 +38,8 @@ class HelpCommand extends Composer {
 Supported private admin commands:
 /start
 /help
-/learn {word}
-/unlearn {word}
+/learn {words}
+/unlearn {words}
         `);
     }
     async handler_private_member(context, next) {
@@ -74,10 +74,10 @@ Supported private member commands:
         context.reply(`
 Supported public admin commands:
 /help
-/learn {word}
-/unlearn {word}
-/warn
-/unwarn
+/learn {words}
+/unlearn {words}
+/warn [{number}]
+/unwarn [{number}]
         `);
     }
     async handler_public_member(context, next) {

@@ -19,10 +19,8 @@ class ReportCommand extends Composer {
     async handler_public_member(context, next) {
         // check handler condition (is public and not admin)
         if (
-            !(
-                context.message.chat.type !== "private" &&
-                !(await this.database.is_admin(context.message.from.id))
-            )
+            !(context.message.chat.type !== "private")
+            // !(await this.database.is_admin(context.message.from.id))
         ) {
             return next();
         }
@@ -32,14 +30,14 @@ class ReportCommand extends Composer {
             for (let admin_id of await this.database.get_admins()) {
                 // report, the reporter message
                 context.telegram.forwardMessage(
-                    admin_id,
+                    admin_id.tgId,
                     context.message.chat.id,
                     context.message.message_id
                 );
 
                 // report, the reported message
                 context.telegram.forwardMessage(
-                    admin_id,
+                    admin_id.tgId,
                     context.message.chat.id,
                     context.message.reply_to_message.message_id
                 );

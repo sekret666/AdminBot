@@ -27,12 +27,22 @@ class WarnCommand extends Composer {
             return next();
         }
 
+        // get optional warn number
+        let number = parseInt(
+            context.message.text.replace(/^\/warn@?[a-zA-Z]* /, "")
+        );
+        if (isNaN(number)) {
+            number = 1;
+        }
+
         // warn message sender
         if ("reply_to_message" in context.message) {
             warn(
                 context,
                 this.database,
-                context.message.reply_to_message.from.id
+                context.message.reply_to_message.from.id,
+                number,
+                "Administrator command"
             );
         } else {
             context.reply(`

@@ -25,7 +25,7 @@ class SpamMessage extends Composer {
         // delete message
         // warn
         context.deleteMessage();
-        warn(context, this.database, context.message.from.id);
+        warn(context, this.database, context.message.from.id, 1, "Send spam");
     }
 }
 
