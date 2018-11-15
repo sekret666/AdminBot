@@ -8,20 +8,23 @@ const SpamModel = require(__dirname + "/spam");
 const ClearPeriodModel = require(__dirname + "/clear_period");
 const ParentChildInGroupModel = require(__dirname + "/parent_child_in_group");
 
-const dbDialect = "sqlite";
-const dbPath = __dirname + "/db/tgDB.sqlite";
 const dbConfigFilePath = __dirname + "/db/db_config.json";
 const dbConfig = getDatabaseConfig();
+
+const options = {
+    dialect: dbConfig.dialect,
+    operatorsAliases: false
+}
+
+if (options.dialect == 'sqlite') {
+    options.storage = __dirname + "/db/tgDB.sqlite"
+}
 
 const sequelize = new Sequelize(
     dbConfig.dbName,
     dbConfig.username,
     dbConfig.password,
-    {
-        dialect: dbDialect,
-        operatorsAliases: false,
-        storage: dbPath
-    }
+    options
 );
 
 const Admin = AdminModel.createModel(sequelize, Sequelize);
