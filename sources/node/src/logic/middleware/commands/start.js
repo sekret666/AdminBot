@@ -22,6 +22,7 @@ class StartCommand extends Composer {
 Hi dear [${context.message.from.first_name}](tg://user?id=${
             context.message.from.id
         })!
+
 click /help
         `);
     }

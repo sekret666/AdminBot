@@ -36,6 +36,7 @@ class HelpCommand extends Composer {
 
         context.reply(`
 Supported private admin commands:
+
 /start
 /help
 /learn {words}
@@ -55,6 +56,7 @@ Supported private admin commands:
 
         context.reply(`
 Supported private member commands:
+
 /start
 /help
 /register {password}
@@ -73,6 +75,7 @@ Supported private member commands:
 
         context.reply(`
 Supported public admin commands:
+
 /help
 /learn {words}
 /unlearn {words}
@@ -93,6 +96,7 @@ Supported public admin commands:
 
         context.reply(`
 Supported public member commands:
+
 /help
 /report
         `);

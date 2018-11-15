@@ -67,6 +67,7 @@ class MemberAddsMember extends Composer {
 Sorry dear [${context.message.from.first_name}](tg://user?id=${
             context.message.from.id
         })!
+
 Only my administrators can add me to groups or channels...
         `);
         context.leaveChat();
