@@ -1,13 +1,10 @@
+require("dotenv").config();
 const { Bot } = require("./logic/bot.js");
 const { Database } = require("./database/db_manager.js");
 
 const Telegarf = require("telegraf");
 
 const start = async () => {
-    // init env vars
-    require("dotenv").config();
-    let token = process.env.BOT_TOKEN;
-
     // init sqlite
     let path = require("path");
     let sqlite3 = require("sqlite3").verbose();
@@ -22,7 +19,7 @@ const start = async () => {
     await database.init();
 
     // start bot
-    let bot = new Bot(token, options, database);
+    let bot = new Bot(process.env.BOT_TOKEN, options, database);
     bot.init();
     bot.start();
 };
