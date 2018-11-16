@@ -5,3 +5,4 @@ sources/*/build/
 sources/*/.env
 *.sqlite
 *db_config.json
+*.db

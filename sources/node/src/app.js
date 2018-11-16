@@ -8,10 +8,12 @@ const start = async () => {
     // init sqlite
     let path = require("path");
     let sqlite3 = require("sqlite3").verbose();
-    let db = new sqlite3.Database(path.join(process.cwd(), "public", "kgb.db"));
+    let db = new sqlite3.Database(
+        path.join(process.cwd(), process.env.DB_STORAGE)
+    );
     let options = {
         db: db,
-        table_name: "kgb"
+        table_name: "sessions"
     };
 
     // init database
