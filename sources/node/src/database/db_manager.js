@@ -1,5 +1,4 @@
 const Sequelize = require("sequelize");
-const fs = require("fs");
 
 const AdminModel = require(__dirname + "/admin");
 const UserModel = require(__dirname + "/user");
@@ -8,16 +7,15 @@ const SpamModel = require(__dirname + "/spam");
 const ClearPeriodModel = require(__dirname + "/clear_period");
 const ParentChildInGroupModel = require(__dirname + "/parent_child_in_group");
 
-const dbConfigFilePath = __dirname + "/db/db_config.json";
-const dbConfig = getDatabaseConfig();
 
+const dbConfig = getDatabaseConfig();
 const options = {
     dialect: dbConfig.dialect,
     operatorsAliases: false
 }
 
 if (options.dialect == 'sqlite') {
-    options.storage = __dirname + "/db/tgDB.sqlite"
+    options.storage = process.env.DB_STORAGE
 }
 
 const sequelize = new Sequelize(
@@ -329,7 +327,12 @@ class Database {
 }
 
 function getDatabaseConfig() {
-    return JSON.parse(fs.readFileSync(dbConfigFilePath));
+    return {
+        dialect: process.env.DB_DIALECT,
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        dbName: process.env.DB_NAME
+    }
 }
 
 exports.Database = Database;
