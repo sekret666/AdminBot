@@ -34,7 +34,7 @@ class HelpCommand extends Composer {
             return next();
         }
 
-        context.reply(`
+        await context.replyWithMarkdown(`
 Supported private admin commands:
 
 /start
@@ -54,7 +54,7 @@ Supported private admin commands:
             return next();
         }
 
-        context.reply(`
+        await context.replyWithMarkdown(`
 Supported private member commands:
 
 /start
@@ -73,7 +73,7 @@ Supported private member commands:
             return next();
         }
 
-        context.reply(`
+        await context.replyWithMarkdown(`
 Supported public admin commands:
 
 /help
@@ -94,7 +94,7 @@ Supported public admin commands:
             return next();
         }
 
-        context.reply(`
+        await context.replyWithMarkdown(`
 Supported public member commands:
 
 /help

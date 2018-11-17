@@ -31,7 +31,7 @@ class Command extends Composer {
             return next();
         }
 
-        context.reply(`
+        await context.replyWithMarkdown(`
 Unsupported command!
 click /help
         `);

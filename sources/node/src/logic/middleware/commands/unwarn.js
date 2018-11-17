@@ -45,7 +45,7 @@ class UnwarnCommand extends Composer {
                 "Administrator command"
             );
         } else {
-            context.reply(`
+            await context.replyWithMarkdown(`
 Please reply the member message to unwarn!
             `);
         }

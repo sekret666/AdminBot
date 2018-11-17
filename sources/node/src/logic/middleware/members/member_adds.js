@@ -51,7 +51,10 @@ class MemberAddsMember extends Composer {
         // remove bot
         // delete message
         // warm
-        context.telegram.kickChatMember(context.message.chat.id, member.id);
+        await context.telegram.kickChatMember(
+            context.message.chat.id,
+            member.id
+        );
         context.deleteMessage();
         warn(context, this.database, context.message.from.id, 1, "Add bot");
     }
@@ -63,7 +66,7 @@ class MemberAddsMember extends Composer {
 
         // say sorry
         // left chat
-        context.replyWithMarkdown(`
+        await context.replyWithMarkdown(`
 Sorry dear [${context.message.from.first_name}](tg://user?id=${
             context.message.from.id
         })!

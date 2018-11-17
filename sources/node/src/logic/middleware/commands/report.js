@@ -29,25 +29,25 @@ class ReportCommand extends Composer {
             // report message to admins
             for (let admin_id of await this.database.get_admins()) {
                 // report, the reporter message
-                context.telegram.forwardMessage(
+                await context.telegram.forwardMessage(
                     admin_id.tgId,
                     context.message.chat.id,
                     context.message.message_id
                 );
 
                 // report, the reported message
-                context.telegram.forwardMessage(
+                await context.telegram.forwardMessage(
                     admin_id.tgId,
                     context.message.chat.id,
                     context.message.reply_to_message.message_id
                 );
             }
 
-            context.reply(`
+            await context.replyWithMarkdown(`
 Message reported to admins!
             `);
         } else {
-            context.reply(`
+            await context.replyWithMarkdown(`
 Please reply a message to report!
             `);
         }

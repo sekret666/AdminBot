@@ -61,7 +61,7 @@ class AdminAddsMember extends Composer {
         await this.database.find_or_create_group(context.message.chat.id);
 
         // say thanks
-        context.replyWithMarkdown(`
+        await context.replyWithMarkdown(`
 Thanks dear [${context.message.from.first_name}](tg://user?id=${
             context.message.from.id
         })!

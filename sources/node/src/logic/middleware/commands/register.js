@@ -27,11 +27,11 @@ class RegisterCommand extends Composer {
         if (context.message.text.includes(process.env.BOT_PASSWORD)) {
             await this.database.add_admin(context.message.from.id);
 
-            context.reply(`
+            await context.replyWithMarkdown(`
 Register was successful!
             `);
         } else {
-            context.reply(`
+            await context.replyWithMarkdown(`
 Incorrect password!
             `);
         }

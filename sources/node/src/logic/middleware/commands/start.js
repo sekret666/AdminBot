@@ -18,7 +18,7 @@ class StartCommand extends Composer {
             return next();
         }
 
-        context.replyWithMarkdown(`
+        await context.replyWithMarkdown(`
 Hi dear [${context.message.from.first_name}](tg://user?id=${
             context.message.from.id
         })!

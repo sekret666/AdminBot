@@ -46,7 +46,7 @@ class UnlearnCommand extends Composer {
         for (let word of spam_words) {
             await this.database.remove_global_spam(word);
         }
-        context.reply(`
+        await context.replyWithMarkdown(`
 Words globally unlearned!
         `);
     }
@@ -79,7 +79,7 @@ Words globally unlearned!
         for (let word of spam_words) {
             await this.database.remove_spam(context.message.chat.id, word);
         }
-        context.reply(`
+        await context.replyWithMarkdown(`
 Words unlearned!
         `);
     }

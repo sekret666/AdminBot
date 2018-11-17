@@ -46,7 +46,7 @@ class LearnCommand extends Composer {
         for (let word of spam_words) {
             await this.database.add_global_spam(word);
         }
-        context.reply(`
+        await context.replyWithMarkdown(`
 Words globally learned!
         `);
     }
@@ -79,7 +79,7 @@ Words globally learned!
         for (let word of spam_words) {
             await this.database.add_spam(context.message.chat.id, word);
         }
-        context.reply(`
+        await context.replyWithMarkdown(`
 Words learned!
         `);
     }
