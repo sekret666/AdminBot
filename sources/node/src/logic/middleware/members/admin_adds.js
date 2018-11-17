@@ -40,7 +40,7 @@ class AdminAddsMember extends Composer {
         );
 
         // delete message
-        context.deleteMessage();
+        await context.deleteMessage();
     }
     async adds_bot(context, member) {
         // check handler condition (joined bot and not me)
@@ -49,7 +49,7 @@ class AdminAddsMember extends Composer {
         }
 
         // delete message
-        context.deleteMessage();
+        await context.deleteMessage();
     }
     async adds_me(context, member) {
         // check handler condition (joined bot and me)

@@ -14,7 +14,7 @@ class RemovesMember extends Composer {
 
     async handler_removes(context, next) {
         // delete message
-        context.deleteMessage();
+        await context.deleteMessage();
     }
 }
 

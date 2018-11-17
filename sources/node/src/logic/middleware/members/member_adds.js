@@ -40,7 +40,7 @@ class MemberAddsMember extends Composer {
         );
 
         // delete message
-        context.deleteMessage();
+        await context.deleteMessage();
     }
     async adds_bot(context, member) {
         // check handler condition (joined bot and not me)
@@ -55,7 +55,7 @@ class MemberAddsMember extends Composer {
             context.message.chat.id,
             member.id
         );
-        context.deleteMessage();
+        await context.deleteMessage();
         warn(context, this.database, context.message.from.id, 1, "Add bot");
     }
     async adds_me(context, member) {
