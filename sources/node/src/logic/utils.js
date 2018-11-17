@@ -30,13 +30,13 @@ Reason: ${text}
             await context.telegram.kickChatMember(context.message.chat.id, id);
 
             // warn parent
-            await warn(
-                context,
-                database,
-                await database.get_parent(context.message.chat.id, id),
-                1,
-                "Bad child"
+            let parent_id = await database.get_parent(
+                context.message.chat.id,
+                id
             );
+            if (parent_id !== id) {
+                await warn(context, database, parent_id, 1, "Bad child");
+            }
         } catch (error) {}
     }
 };
