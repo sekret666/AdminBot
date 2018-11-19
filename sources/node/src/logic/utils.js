@@ -1,7 +1,20 @@
 const warn = async (context, database, id, number, text) => {
-    // check id is exists
+    // check member status
     try {
-        await context.telegram.getChatMember(context.message.chat.id, id);
+        // get member status
+        let status = (await context.telegram.getChatMember(
+            context.message.chat.id,
+            id
+        )).status;
+
+        if (
+            status === "creator" ||
+            status === "administrator" ||
+            status === "left" ||
+            status === "kicked"
+        ) {
+            return;
+        }
     } catch (error) {
         return;
     }
@@ -25,23 +38,38 @@ Reason: ${text}
     `);
 
     if (warns >= 3) {
-        try {
-            // check kick warn
-            await context.telegram.kickChatMember(context.message.chat.id, id);
+        // kick member
+        await context.telegram.kickChatMember(context.message.chat.id, id);
 
-            // warn parent
-            let parent_id = await database.get_parent(
-                context.message.chat.id,
-                id
-            );
-            if (parent_id !== id) {
-                await warn(context, database, parent_id, 1, "Bad child");
-            }
-        } catch (error) {}
+        // warn parent
+        let parent_id = await database.get_parent(context.message.chat.id, id);
+        if (parent_id !== id) {
+            await warn(context, database, parent_id, 1, "Bad child");
+        }
     }
 };
 
 const unwarn = async (context, database, id, number, text) => {
+    // check member status
+    try {
+        // get member status
+        let status = (await context.telegram.getChatMember(
+            context.message.chat.id,
+            id
+        )).status;
+
+        if (
+            status === "creator" ||
+            status === "administrator" ||
+            status === "left" ||
+            status === "kicked"
+        ) {
+            return;
+        }
+    } catch (error) {
+        return;
+    }
+
     // remove warns
     let warns = await database.get_warns(context.message.chat.id, id);
     if (isNaN(warns)) {
