@@ -10,6 +10,10 @@ class LeaveCommand extends Composer {
 
         // init middlewares
         this.command("leave", this.handler_public_admin.bind(this));
+        this.command(
+            `leave@${process.env.BOT_ID}`,
+            this.handler_public_admin.bind(this)
+        );
     }
 
     async handler_public_admin(context, next) {

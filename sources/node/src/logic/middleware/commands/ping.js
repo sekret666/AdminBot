@@ -10,6 +10,10 @@ class PingCommand extends Composer {
 
         // init middlewares
         this.command("ping", this.handler_ping.bind(this));
+        this.command(
+            `ping@${process.env.BOT_ID}`,
+            this.handler_ping.bind(this)
+        );
     }
 
     async handler_ping(context, next) {

@@ -39,8 +39,9 @@ Supported private admin commands:
 
 /start
 /help
-/learn {words}
-/unlearn {words}
+/ping
+/global_learn [{words}]
+/global_unlearn [{words}]
         `);
     }
     async handler_private_member(context, next) {
@@ -59,6 +60,7 @@ Supported private member commands:
 
 /start
 /help
+/ping
 /register {password}
         `);
     }
@@ -77,10 +79,15 @@ Supported private member commands:
 Supported public admin commands:
 
 /help
-/learn {words}
-/unlearn {words}
+/ping
+/leave
+/delete [{number}]
 /warn [{number}]
 /unwarn [{number}]
+/learn [{words}]
+/unlearn [{words}]
+/global_learn [{words}]
+/global_unlearn [{words}]
         `);
     }
     async handler_public_member(context, next) {
@@ -98,6 +105,7 @@ Supported public admin commands:
 Supported public member commands:
 
 /help
+/ping
 /report
         `);
     }
