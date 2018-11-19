@@ -1,7 +1,7 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../utils.js");
 
-class UnlearnCommand extends Composer {
+class GlobalLearnCommand extends Composer {
     constructor(database) {
         super();
 
@@ -9,21 +9,16 @@ class UnlearnCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("unlearn", this.handler_public_admin.bind(this));
+        this.command("global_learn", this.handler_admin.bind(this));
         this.command(
-            `unlearn@${process.env.BOT_ID}`,
-            this.handler_public_admin.bind(this)
+            `global_learn@${process.env.BOT_ID}`,
+            this.handler_admin.bind(this)
         );
     }
 
-    async handler_public_admin(context, next) {
-        // check handler condition (is public and admin)
-        if (
-            !(
-                context.message.chat.type !== "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
+    async handler_admin(context, next) {
+        // check handler condition (is admin)
+        if (!(await this.database.is_admin(context.message.from.id))) {
             return next();
         }
 
@@ -32,23 +27,23 @@ class UnlearnCommand extends Composer {
         if ("reply_to_message" in context.message) {
             // reply learn
             spam_words = context.message.reply_to_message.text
-                .replace(/^\/unlearn@?[a-zA-Z]* /, "")
+                .replace(/^\/global_learn@?[a-zA-Z]* /, "")
                 .split(" ");
         } else {
             // local group learn word
             spam_words = context.message.text
-                .replace(/^\/unlearn@?[a-zA-Z]* /, "")
+                .replace(/^\/global_learn@?[a-zA-Z]* /, "")
                 .split(" ");
         }
 
-        // unlearn all words
+        // learn global all words
         for (let word of spam_words) {
-            await this.database.remove_spam(context.message.chat.id, word);
+            await this.database.add_global_spam(word);
         }
         await context.replyWithMarkdown(`
-Words unlearned!
+Words globally learned!
         `);
     }
 }
 
-exports.UnlearnCommand = UnlearnCommand;
+exports.GlobalLearnCommand = GlobalLearnCommand;

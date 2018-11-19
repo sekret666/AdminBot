@@ -5,6 +5,8 @@ const { RegisterCommand } = require("./commands/register.js");
 const { ReportCommand } = require("./commands/report.js");
 const { LearnCommand } = require("./commands/learn.js");
 const { UnlearnCommand } = require("./commands/unlearn.js");
+const { GlobalLearnCommand } = require("./commands/global_learn.js");
+const { GlobalUnlearnCommand } = require("./commands/global_unlearn.js");
 const { WarnCommand } = require("./commands/warn.js");
 const { UnwarnCommand } = require("./commands/unwarn.js");
 
@@ -19,6 +21,8 @@ class Command extends Composer {
         this.use(new ReportCommand(database));
         this.use(new LearnCommand(database));
         this.use(new UnlearnCommand(database));
+        this.use(new GlobalLearnCommand(database));
+        this.use(new GlobalUnlearnCommand(database));
         this.use(new WarnCommand(database));
         this.use(new UnwarnCommand(database));
 
