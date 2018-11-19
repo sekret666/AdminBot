@@ -9,9 +9,9 @@ class GlobalLearnCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("global_learn", this.handler_admin.bind(this));
+        this.command("globallearn", this.handler_admin.bind(this));
         this.command(
-            `global_learn@${process.env.BOT_ID}`,
+            `globallearn@${process.env.BOT_ID}`,
             this.handler_admin.bind(this)
         );
     }
@@ -27,12 +27,12 @@ class GlobalLearnCommand extends Composer {
         if ("reply_to_message" in context.message) {
             // reply learn
             spam_words = context.message.reply_to_message.text
-                .replace(/^\/global_learn@?[a-zA-Z]* /, "")
+                .replace(/^\/globallearn@?[a-zA-Z]* /, "")
                 .split(" ");
         } else {
             // local group learn word
             spam_words = context.message.text
-                .replace(/^\/global_learn@?[a-zA-Z]* /, "")
+                .replace(/^\/globallearn@?[a-zA-Z]* /, "")
                 .split(" ");
         }
 

@@ -40,8 +40,8 @@ Supported private admin commands:
 /start
 /help
 /ping
-/global_learn [{words}]
-/global_unlearn [{words}]
+/globallearn [{words}]
+/globalunlearn [{words}]
         `);
     }
     async handler_private_member(context, next) {
@@ -86,8 +86,8 @@ Supported public admin commands:
 /unwarn [{number}]
 /learn [{words}]
 /unlearn [{words}]
-/global_learn [{words}]
-/global_unlearn [{words}]
+/globallearn [{words}]
+/globalunlearn [{words}]
         `);
     }
     async handler_public_member(context, next) {

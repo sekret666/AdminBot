@@ -9,9 +9,9 @@ class GlobalUnlearnCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("global_unlearn", this.handler_admin.bind(this));
+        this.command("globalunlearn", this.handler_admin.bind(this));
         this.command(
-            `global_unlearn@${process.env.BOT_ID}`,
+            `globalunlearn@${process.env.BOT_ID}`,
             this.handler_admin.bind(this)
         );
     }
@@ -27,12 +27,12 @@ class GlobalUnlearnCommand extends Composer {
         if ("reply_to_message" in context.message) {
             // reply learn
             spam_words = context.message.reply_to_message.text
-                .replace(/^\/global_unlearn@?[a-zA-Z]* /, "")
+                .replace(/^\/globalunlearn@?[a-zA-Z]* /, "")
                 .split(" ");
         } else {
             // local group learn word
             spam_words = context.message.text
-                .replace(/^\/global_unlearn@?[a-zA-Z]* /, "")
+                .replace(/^\/globalunlearn@?[a-zA-Z]* /, "")
                 .split(" ");
         }
 
