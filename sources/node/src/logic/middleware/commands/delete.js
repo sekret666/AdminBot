@@ -34,17 +34,25 @@ class DeleteCommand extends Composer {
         if (isNaN(number)) {
             number = 1;
         }
+        if (number == 0) {
+            number = 1;
+        }
 
-        // delete message
+        // delete messages
         if ("reply_to_message" in context.message) {
-            console.log(context.message);
-            // warn(
-            //     context,
-            //     this.database,
-            //     context.message.reply_to_message.from.id,
-            //     number,
-            //     "Administrator command"
-            // );
+            for (
+                let message_id = context.message.reply_to_message.message_id;
+                message_id !=
+                context.message.reply_to_message.message_id + number;
+                message_id += number >= 0 ? 1 : -1
+            ) {
+                try {
+                    await context.telegram.deleteMessage(
+                        context.message.chat.id,
+                        message_id
+                    );
+                } catch (error) {}
+            }
         } else {
             await context.replyWithMarkdown(`
 Please reply the message to delete!
