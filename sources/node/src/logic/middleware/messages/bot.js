@@ -1,5 +1,5 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../utils.js");
+const { warn, unwarn, warnable } = require("../../utils.js");
 
 class BotMessage extends Composer {
     constructor(database) {
@@ -23,8 +23,20 @@ class BotMessage extends Composer {
             return next();
         }
 
-        // delete message
-        await context.deleteMessage();
+        // check bot is warnable
+        if (warnable(context, context.message.from.id)) {
+            // delete message
+            // warn bot 3
+
+            await context.deleteMessage();
+            warn(
+                context,
+                this.database,
+                context.message.from.id,
+                3,
+                "Bot Message"
+            );
+        }
     }
 }
 

@@ -1,21 +1,6 @@
 const warn = async (context, database, id, number, text) => {
     // check member status
-    try {
-        // get member status
-        let status = (await context.telegram.getChatMember(
-            context.message.chat.id,
-            id
-        )).status;
-
-        if (
-            status === "creator" ||
-            status === "administrator" ||
-            status === "left" ||
-            status === "kicked"
-        ) {
-            return;
-        }
-    } catch (error) {
+    if (!warnable(context, id)) {
         return;
     }
 
@@ -48,7 +33,6 @@ Reason: ${text}
         }
     }
 };
-
 const unwarn = async (context, database, id, number, text) => {
     // check member status
     try {
@@ -88,6 +72,25 @@ To user: [${id}](tg://user?id=${id}) (${warns} of 3)
 Reason: ${text}
     `);
 };
+const warnable = (context, id) => {
+    try {
+        // get member status
+        let status = (await context.telegram.getChatMember(
+            context.message.chat.id,
+            id
+        )).status;
+
+        if (
+            status === "creator" ||
+            status === "administrator" ||
+            status === "left" ||
+            status === "kicked"
+        ) {
+            return false;
+        }
+    } catch (error) {}
+    return true;
+};
 
 const increase = (warns, number) => {
     warns += number;
@@ -108,3 +111,4 @@ const decrease = (warns, number) => {
 
 exports.warn = warn;
 exports.unwarn = unwarn;
+exports.warnable = warnable;
