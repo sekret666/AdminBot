@@ -23,20 +23,10 @@ class BotMessage extends Composer {
             return next();
         }
 
-        // check bot is warnable
-        if (warnable(context, context.message.from.id)) {
-            // delete message
-            // warn bot 3
-
-            await context.deleteMessage();
-            warn(
-                context,
-                this.database,
-                context.message.from.id,
-                3,
-                "Bot Message"
-            );
-        }
+        // delete bot message
+        // try remove bot
+        await context.deleteMessage();
+        warn(context, this.database, context.message.from.id, 3, "Bot Message");
     }
 }
 
