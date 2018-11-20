@@ -2,7 +2,7 @@ const Composer = require("telegraf/composer");
 
 const Telegraf = require("telegraf");
 
-class Bot extends Composer {
+class Base extends Composer {
     constructor(database) {
         super();
 
@@ -48,4 +48,4 @@ class Bot extends Composer {
     }
 }
 
-exports.Bot = Bot;
+exports.Base = Base;

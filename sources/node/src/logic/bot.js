@@ -1,8 +1,8 @@
 const Telegraf = require("telegraf");
 
-const { Database } = require("./database/db_manager.js");
+const { Database } = require("../database/db_manager.js");
 
-const { Bot } = require("./middleware/bot.js");
+const { Base } = require("./middleware/base.js");
 const { Command } = require("./middleware/command.js");
 const { Member } = require("./middleware/member.js");
 const { Message } = require("./middleware/message.js");
@@ -18,7 +18,7 @@ class Bot {
         await this.database.init();
 
         // init middlewares
-        this.bot.use(new Bot(this.database));
+        this.bot.use(new Base(this.database));
         this.bot.use(new Command(this.database));
         this.bot.use(new Member(this.database));
         this.bot.use(new Message(this.database));
