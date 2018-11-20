@@ -4,7 +4,7 @@ const { Bot } = require("./logic/bot.js");
 const start = async () => {
     // start bot
     let bot = new Bot(process.env.BOT_TOKEN);
-    bot.init();
+    await bot.init();
     bot.start();
 };
 

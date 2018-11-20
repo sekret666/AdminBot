@@ -10,10 +10,10 @@ const { Message } = require("./middleware/message.js");
 class Bot {
     constructor(token) {
         this.bot = new Telegraf(token);
-        this.database = new Database(); 
+        this.database = new Database();
     }
 
-    init() {
+    async init() {
         // init database
         await this.database.init();
 
