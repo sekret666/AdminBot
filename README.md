@@ -32,3 +32,11 @@ DB_USERNAME="Your Database Username"
 DB_PASSWORD="Your Database Password"
 DB_STORAGE="Your Database Path"
 ```
+
+## Notes
+
+If you are using `mysql` you should run this query before starting bot:
+
+```code
+CREATE TABLE `sessions` (`id` varchar(100) NOT NULL, `session` longtext NOT NULL, PRIMARY KEY (`id`))
+```

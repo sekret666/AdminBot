@@ -1,6 +1,6 @@
 const warn = async (context, database, id, number, text) => {
     // check member status
-    if (!warnable(context, id)) {
+    if (!(await warnable(context, id))) {
         return;
     }
 
@@ -72,7 +72,7 @@ To user: [${id}](tg://user?id=${id}) (${warns} of 3)
 Reason: ${text}
     `);
 };
-const warnable = (context, id) => {
+const warnable = async (context, id) => {
     try {
         // get member status
         let status = (await context.telegram.getChatMember(

@@ -17,11 +17,8 @@ class PingCommand extends Composer {
     }
 
     async handler_ping(context, next) {
-        if (context.session.a) {
-            context.session.a++;
-        } else {
-            context.session.a = 0;
-        }
+        context.session.a = context.session.a | 0;
+        context.session.a++;
         await context.replyWithMarkdown(`
 pong ${context.session.a}!
         `);

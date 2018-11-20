@@ -15,33 +15,42 @@ class Base extends Composer {
         // init session with sqlite or mysql
         if (process.env.DB_DIALECT === "mysql") {
             // mysql
-
-            // create mysql session middleware
-            let TelegrafSession = require("telegraf-session-mysql");
-            return new TelegrafSession({
-                host: process.env.DB_HOST,
-                user: process.env.DB_USERNAME,
-                password: process.env.DB_PASSWORD,
-                database: process.env.DB_NAME
-            }).middleware();
+            return this.init_session_mysql.call(this);
         } else {
             // sqlite
-
-            // get sqlite database path
-            let path = require("path");
-            let sqlite3 = require("sqlite3").verbose();
-            let database_path = path.join(
-                process.cwd(),
-                process.env.DB_STORAGE
-            );
-
-            // create sqlite session middleware
-            let TelegrafSession = require("telegraf-session-sqlite");
-            return TelegrafSession({
-                db: new sqlite3.Database(database_path),
-                table_name: "sessions"
-            });
+            return this.init_session_sqlite.call(this);
         }
+    }
+
+    init_session_mysql() {
+        // create mysql session middleware
+        let TelegrafSession = require("telegraf-session-mysql");
+        return new TelegrafSession({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME
+        }).middleware();
+    }
+
+    init_session_sqlite() {
+        // get sqlite database path
+        let path = require("path");
+        let sqlite3 = require("sqlite3").verbose();
+        let database_path = path.join(process.cwd(), process.env.DB_STORAGE);
+
+        // init sessions table
+        let database = new sqlite3.Database(database_path);
+        database.run(
+            "CREATE TABLE IF NOT EXISTS 'sessions' (id varchar(255) primary key, session varchar(255))"
+        );
+
+        // create sqlite session middleware
+        let TelegrafSession = require("telegraf-session-sqlite");
+        return TelegrafSession({
+            db: database,
+            table_name: "sessions"
+        });
     }
 }
 
