@@ -11,6 +11,9 @@ class Bot {
     constructor(token) {
         this.bot = new Telegraf(token);
         this.database = new Database();
+        this.bot.catch(error => {
+            console.error(`Bot error: ${error}`);
+        });
     }
 
     async init() {

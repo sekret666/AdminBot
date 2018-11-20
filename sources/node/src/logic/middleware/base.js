@@ -9,9 +9,6 @@ class Base extends Composer {
         // init middlewares
         this.use(Telegraf.log());
         this.use(this.init_session.call(this));
-        this.catch(error => {
-            console.error(`Bot error: ${error}`);
-        });
     }
 
     init_session() {
