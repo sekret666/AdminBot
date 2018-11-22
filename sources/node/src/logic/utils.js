@@ -31,7 +31,7 @@ Reason: ${text}
 
         // warn parent
         let parent_id = await database.get_parent(context.message.chat.id, id);
-        if (parent_id !== null && parent_id !== id) {
+        if (parent_id != null && parent_id != id) {
             return (
                 1 + (await warn(context, database, parent_id, 1, "Bad child"))
             );
