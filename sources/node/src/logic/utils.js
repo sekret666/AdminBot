@@ -1,7 +1,8 @@
+// returns warns count
 const warn = async (context, database, id, number, text) => {
     // check member status
     if (!(await warnable(context, id))) {
-        return;
+        return 0;
     }
 
     // add warns
@@ -29,31 +30,17 @@ Reason: ${text}
         // warn parent
         let parent_id = await database.get_parent(context.message.chat.id, id);
         if (parent_id !== id) {
-            await warn(context, database, parent_id, 1, "Bad child");
+            return (
+                1 + (await warn(context, database, parent_id, 1, "Bad child"))
+            );
         }
+    } else {
+        return 0;
     }
 };
+
+// returns warns count
 const unwarn = async (context, database, id, number, text) => {
-    // check member status
-    try {
-        // get member status
-        let status = (await context.telegram.getChatMember(
-            context.message.chat.id,
-            id
-        )).status;
-
-        if (
-            status === "creator" ||
-            status === "administrator" ||
-            status === "left" ||
-            status === "kicked"
-        ) {
-            return;
-        }
-    } catch (error) {
-        return;
-    }
-
     // remove warns
     let warns = await database.get_warns(context.message.chat.id, id);
     if (isNaN(warns)) {
@@ -71,7 +58,10 @@ Unwarn message:
 To user: [${id}](tg://user?id=${id}) (${warns} of 3)
 Reason: ${text}
     `);
+
+    return 1;
 };
+
 const warnable = async (context, id) => {
     try {
         // get member status
@@ -91,7 +81,6 @@ const warnable = async (context, id) => {
     } catch (error) {}
     return true;
 };
-
 const increase = (warns, number) => {
     warns += number;
     if (warns > 3) {
@@ -111,4 +100,3 @@ const decrease = (warns, number) => {
 
 exports.warn = warn;
 exports.unwarn = unwarn;
-exports.warnable = warnable;

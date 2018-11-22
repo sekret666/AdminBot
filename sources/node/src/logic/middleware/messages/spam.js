@@ -22,10 +22,19 @@ class SpamMessage extends Composer {
             return next();
         }
 
+        // try warn
         // delete message
-        // warn
-        await context.deleteMessage();
-        warn(context, this.database, context.message.from.id, 1, "Send spam");
+        if (
+            warn(
+                context,
+                this.database,
+                context.message.from.id,
+                1,
+                "Send spam"
+            ) > 0
+        ) {
+            await context.deleteMessage();
+        }
     }
 }
 

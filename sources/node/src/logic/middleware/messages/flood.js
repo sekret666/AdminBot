@@ -41,7 +41,7 @@ class FloodMessage extends Composer {
             return next();
         }
 
-        // flood detected, so warn
+        // flood detected, so try warn
         warn(
             context,
             this.database,
