@@ -37,7 +37,7 @@ class UnwarnCommand extends Composer {
 
         // unwarn message sender
         if ("reply_to_message" in context.message) {
-            unwarn(
+            await unwarn(
                 context,
                 this.database,
                 context.message.reply_to_message.from.id,

@@ -25,13 +25,13 @@ class SpamMessage extends Composer {
         // try warn
         // delete message
         if (
-            warn(
+            (await warn(
                 context,
                 this.database,
                 context.message.from.id,
                 1,
                 "Send spam"
-            ) > 0
+            )) > 0
         ) {
             await context.deleteMessage();
         }

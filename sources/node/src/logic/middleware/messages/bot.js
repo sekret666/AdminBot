@@ -26,13 +26,13 @@ class BotMessage extends Composer {
         // try warn
         // delete message
         if (
-            warn(
+            (await warn(
                 context,
                 this.database,
                 context.message.from.id,
                 3,
                 "Bot Message"
-            ) > 0
+            )) > 0
         ) {
             await context.deleteMessage();
         }

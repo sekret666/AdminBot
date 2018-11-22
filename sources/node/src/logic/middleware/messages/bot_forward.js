@@ -26,13 +26,13 @@ class BotForwardMessage extends Composer {
         // try warn
         // delete message
         if (
-            warn(
+            (await warn(
                 context,
                 this.database,
                 context.message.from.id,
                 1,
                 "Bot forward"
-            ) > 0
+            )) > 0
         ) {
             await context.deleteMessage();
         }

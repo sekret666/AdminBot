@@ -42,7 +42,7 @@ class FloodMessage extends Composer {
         }
 
         // flood detected, so try warn
-        warn(
+        await warn(
             context,
             this.database,
             context.message.from.id,

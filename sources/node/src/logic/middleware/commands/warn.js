@@ -37,7 +37,7 @@ class WarnCommand extends Composer {
 
         // warn message sender
         if ("reply_to_message" in context.message) {
-            warn(
+            await warn(
                 context,
                 this.database,
                 context.message.reply_to_message.from.id,

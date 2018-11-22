@@ -5,7 +5,7 @@ const warn = async (context, database, id, number, text) => {
         return 0;
     }
 
-    // add warns
+    // get warns
     let warns = await database.get_warns(context.message.chat.id, id);
     if (isNaN(warns)) {
         warns = 0;
@@ -24,24 +24,26 @@ Reason: ${text}
     `);
 
     if (warns >= 3) {
-        // kick member
-        await context.telegram.kickChatMember(context.message.chat.id, id);
+        // try kick member
+        try {
+            await context.telegram.kickChatMember(context.message.chat.id, id);
+        } catch (error) {}
 
         // warn parent
         let parent_id = await database.get_parent(context.message.chat.id, id);
-        if (parent_id !== id) {
+        if (parent_id !== null && parent_id !== id) {
             return (
                 1 + (await warn(context, database, parent_id, 1, "Bad child"))
             );
         }
-    } else {
-        return 0;
     }
+
+    return 1;
 };
 
 // returns warns count
 const unwarn = async (context, database, id, number, text) => {
-    // remove warns
+    // get warns
     let warns = await database.get_warns(context.message.chat.id, id);
     if (isNaN(warns)) {
         warns = 0;

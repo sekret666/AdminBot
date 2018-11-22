@@ -26,13 +26,13 @@ class ChatForwardMessage extends Composer {
         // try warn
         // delete message
         if (
-            warn(
+            (await warn(
                 context,
                 this.database,
                 context.message.from.id,
                 1,
                 "Channel forward"
-            ) > 0
+            )) > 0
         ) {
             await context.deleteMessage();
         }

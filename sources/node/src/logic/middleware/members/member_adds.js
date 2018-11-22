@@ -56,7 +56,13 @@ class MemberAddsMember extends Composer {
             member.id
         );
         await context.deleteMessage();
-        warn(context, this.database, context.message.from.id, 1, "Add bot");
+        await warn(
+            context,
+            this.database,
+            context.message.from.id,
+            1,
+            "Add bot"
+        );
     }
     async adds_me(context, member) {
         // check handler condition (joined bot and me)
