@@ -16,8 +16,9 @@ class ChatForwardMessage extends Composer {
         // check handler condition (is forwarded from chat and from channel)
         if (
             !(
-                "forward_from_chat" in context.message &&
-                context.message.forward_from_chat.type === "channel"
+                ("forward_from_chat" in context.message &&
+                    context.message.forward_from_chat.type === "channel") ||
+                "forward_from_message_id" in context.message
             )
         ) {
             return next();
