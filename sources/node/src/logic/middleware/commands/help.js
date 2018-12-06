@@ -40,6 +40,8 @@ Supported private admin commands:
 /start
 /help
 /ping
+/admins
+/globallearns
 /globallearn [{words}]
 /globalunlearn [{words}]
         `);
@@ -81,6 +83,8 @@ Supported public admin commands:
 /help
 /ping
 /leave
+/learns
+/globallearns
 /delete [{number}]
 /warn [{number}]
 /unwarn [{number}]
