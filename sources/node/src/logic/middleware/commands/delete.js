@@ -31,27 +31,31 @@ class DeleteCommand extends Composer {
         let number = parseInt(
             context.message.text.replace(/^\/delete@?[a-zA-Z]* /, "")
         );
-        if (isNaN(number)) {
-            number = 1;
-        }
-        if (number == 0) {
+        if (isNaN(number) || number == 0) {
             number = 1;
         }
 
         // delete messages
         if ("reply_to_message" in context.message) {
-            for (
-                let message_id = context.message.reply_to_message.message_id;
-                message_id !=
-                context.message.reply_to_message.message_id + number;
-                message_id += number >= 0 ? 1 : -1
-            ) {
+            let message = 0;
+            let iterate = number >= 0 ? 1 : -1;
+
+            while(number != 0 && message <= 1000 && message >= -1000){
                 try {
                     await context.telegram.deleteMessage(
                         context.message.chat.id,
-                        message_id
+                        context.message.reply_to_message.message_id + message
                     );
+
+                    number += iterate;
                 } catch (error) {}
+
+                message += iterate;
+            }
+
+
+            while (number != 0 && message_id > ) {
+                
             }
         } else {
             await context.replyWithMarkdown(`
