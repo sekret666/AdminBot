@@ -38,19 +38,19 @@ class DeleteCommand extends Composer {
         // delete messages
         if ("reply_to_message" in context.message) {
             let message = 0;
-            let iterate = number >= 0 ? 1 : -1;
+            let message_id = context.message.reply_to_message.message_id;
 
-            while (number != 0 && message <= 1000 && message >= -1000) {
+            while (number != 0 && message <= 100 && message >= -100) {
                 try {
                     await context.telegram.deleteMessage(
                         context.message.chat.id,
-                        context.message.reply_to_message.message_id + message
+                        parseInt(message_id + message)
                     );
 
-                    number += iterate;
+                    number += number >= 0 ? -1 : 1;
                 } catch (error) {}
 
-                message += iterate;
+                message += number >= 0 ? 1 : -1;
             }
         } else {
             await context.replyWithMarkdown(`
