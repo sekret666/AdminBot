@@ -40,7 +40,7 @@ class DeleteCommand extends Composer {
             let message = 0;
             let iterate = number >= 0 ? 1 : -1;
 
-            while(number != 0 && message <= 1000 && message >= -1000){
+            while (number != 0 && message <= 1000 && message >= -1000) {
                 try {
                     await context.telegram.deleteMessage(
                         context.message.chat.id,
@@ -51,11 +51,6 @@ class DeleteCommand extends Composer {
                 } catch (error) {}
 
                 message += iterate;
-            }
-
-
-            while (number != 0 && message_id > ) {
-                
             }
         } else {
             await context.replyWithMarkdown(`
