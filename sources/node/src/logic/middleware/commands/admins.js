@@ -41,7 +41,7 @@ class AdminsCommand extends Composer {
         // send admins list
         await context.replyWithMarkdown(`
 Admins list:
-${admins}
+${admins.join("\n")}
         `);
     }
 }

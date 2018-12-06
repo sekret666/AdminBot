@@ -36,7 +36,7 @@ class LearnsCommand extends Composer {
         // send spams list
         await context.replyWithMarkdown(`
 Spams list:
-${spams}
+${spams.join("\n")}
         `);
     }
 }
