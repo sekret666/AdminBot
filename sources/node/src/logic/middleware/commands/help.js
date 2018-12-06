@@ -83,13 +83,13 @@ Supported public admin commands:
 /help
 /ping
 /leave
-/learns
-/globallearns
 /delete [{number}]
 /warn [{number}]
 /unwarn [{number}]
+/learns
 /learn [{words}]
 /unlearn [{words}]
+/globallearns
 /globallearn [{words}]
 /globalunlearn [{words}]
         `);

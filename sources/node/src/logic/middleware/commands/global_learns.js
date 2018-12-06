@@ -9,28 +9,31 @@ class GlobalLearnsCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("admins", this.handler_public_admin.bind(this));
+        this.command("globallearns", this.handler_admin.bind(this));
         this.command(
-            `admins@${process.env.BOT_ID}`,
-            this.handler_public_admin.bind(this)
+            `globallearns@${process.env.BOT_ID}`,
+            this.handler_admin.bind(this)
         );
     }
 
-    async handler_public_admin(context, next) {
-        // check handler condition (is private and admin)
-        if (
-            !(
-                context.message.chat.type === "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
+    async handler_admin(context, next) {
+        // check handler condition (is admin)
+        if (!(await this.database.is_admin(context.message.from.id))) {
             return next();
         }
 
-        // get admins list
+        // get global spams list
+        let global_spams = await this.database.get_global_spams();
+
+        // map global spams to text
+        global_spams = global_spams.map(
+            global_spam => global_spam.dataValues.text
+        );
+
+        // send global spams list
         await context.replyWithMarkdown(`
-Admins list:
-${await this.database.get_admins()}
+Global spams list:
+${global_spams}
         `);
     }
 }
