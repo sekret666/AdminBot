@@ -38,5 +38,11 @@ DB_STORAGE="Your Database Path"
 If you are using `mysql` you should run this query before starting bot:
 
 ```code
-CREATE TABLE `sessions` (`id` varchar(100) NOT NULL, `session` longtext NOT NULL, PRIMARY KEY (`id`))
+CREATE TABLE `sessions` (`id` varchar(100) NOT NULL, `session` longtext NOT NULL, PRIMARY KEY (`id`));
 ```
+
+```code
+ALTER DATABASE adminbot charset=utf8;
+```
+
+before you run the bot.
