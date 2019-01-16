@@ -3,6 +3,7 @@ const Sequelize = require("sequelize");
 const AdminModel = require(__dirname + "/admin");
 const UserModel = require(__dirname + "/user");
 const GroupModel = require(__dirname + "/group");
+const RuleModel = require(__dirname + "/rule");
 const SpamModel = require(__dirname + "/spam");
 const ClearPeriodModel = require(__dirname + "/clear_period");
 const ParentChildInGroupModel = require(__dirname + "/parent_child_in_group");
@@ -28,6 +29,7 @@ const sequelize = new Sequelize(
 const Admin = AdminModel.createModel(sequelize, Sequelize);
 const User = UserModel.createModel(sequelize, Sequelize);
 const Group = GroupModel.createModel(sequelize, Sequelize);
+const Rule = RuleModel.createModel(sequelize, Sequelize);
 const Spam = SpamModel.createModel(sequelize, Sequelize);
 const ClearPeriod = ClearPeriodModel.createModel(sequelize, Sequelize);
 const ParentChildInGroup = ParentChildInGroupModel.createModel(
@@ -56,6 +58,9 @@ class Database {
 
         Spam.belongsToMany(Group, { through: "SpamGroup" });
         Group.belongsToMany(Spam, { through: "SpamGroup" });
+
+        Rule.belongsToMany(Group, { through: 'GroupRule'} );
+        Group.belongsToMany(Rule, { through: 'GroupRule' } );
 
         Group.hasMany(ClearPeriod);
 
@@ -323,6 +328,29 @@ class Database {
         });
 
         return group;
+    }
+
+    async find_or_create_rule(ruleType) {
+        const [rule, _] = await Rule.findOrCreate({
+            where: {
+                type: ruleType
+            }
+        });
+
+        return rule;
+    }
+
+    async add_rule_to_group(groupTgId, ruleType) {
+        const group = await Group.findByTgId(groupTgId);
+        const rule = await this.find_or_create_rule(ruleType);
+
+        await group.addRule(rule)
+    }
+
+    async get_group_rules(groupTgId) {
+        const group = await Group.findByTgId(groupTgId);
+
+        return await group.getRules();
     }
 }
 
