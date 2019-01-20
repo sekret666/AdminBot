@@ -18,7 +18,7 @@
         "mysql2": "^1.6.4",
         "sequelize": "^4.41.1",
         "sqlite3": "^4.0.3",
-        "telegraf": "^3.25.0",
+        "telegraf": "^3.26.0",
         "telegraf-session-mysql": "^5.1.0",
         "telegraf-session-sqlite": "^1.0.6"
     },
