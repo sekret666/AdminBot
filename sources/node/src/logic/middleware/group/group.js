@@ -16,7 +16,7 @@ class Group extends Composer {
         if (context.message.chat.type !== "private") {
             return true;
         } else {
-            return true;
+            return false;
         }
     }
 }

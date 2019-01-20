@@ -16,11 +16,6 @@ class FloodMessage extends Composer {
     }
 
     async flood(context, next) {
-        // check handler condition (is public)
-        if (!(context.message.chat.type !== "private")) {
-            return next();
-        }
-
         // check floods has this chat and message from same user id and low latency
         if (this.is_flood.call(this, context)) {
             this.floods[context.message.chat.id] = {

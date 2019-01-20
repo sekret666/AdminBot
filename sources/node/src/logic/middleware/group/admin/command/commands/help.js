@@ -1,5 +1,4 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../../../../utils.js");
 
 class HelpCommand extends Composer {
     constructor(database) {
@@ -14,16 +13,6 @@ class HelpCommand extends Composer {
     }
 
     async help(context, next) {
-        // check handler condition (is public and admin)
-        if (
-            !(
-                context.message.chat.type !== "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
-            return next();
-        }
-
         await context.replyWithMarkdown(`
 Supported public admin commands:
 
