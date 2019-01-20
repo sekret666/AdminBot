@@ -9,19 +9,14 @@ class GlobalLearnsCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("globallearns", this.handler_admin.bind(this));
+        this.command("globallearns", this.global_learns.bind(this));
         this.command(
             `globallearns@${process.env.BOT_ID}`,
-            this.handler_admin.bind(this)
+            this.global_learns.bind(this)
         );
     }
 
-    async handler_admin(context, next) {
-        // check handler condition (is admin)
-        if (!(await this.database.is_admin(context.message.from.id))) {
-            return next();
-        }
-
+    async global_learns(context, next) {
         // get global spams list
         let global_spams = await this.database.get_global_spams();
 

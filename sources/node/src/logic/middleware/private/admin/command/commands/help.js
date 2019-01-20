@@ -1,5 +1,5 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../utils.js");
+const { warn, unwarn } = require("../../../../../utils.js");
 
 class HelpCommand extends Composer {
     constructor(database) {
@@ -15,16 +15,15 @@ class HelpCommand extends Composer {
 
     async help(context, next) {
         await context.replyWithMarkdown(`
-Supported group admin commands:
+Supported private admin commands:
 
+/start
 /help
-/leave
-/delete [{number}]
-/warn [{number}]
-/unwarn [{number}]
-/learns
-/learn [{words}]
-/unlearn [{words}]
+/ping
+/admins
+/globallearns
+/globallearn [{words}]
+/globalunlearn [{words}]
         `);
     }
 }

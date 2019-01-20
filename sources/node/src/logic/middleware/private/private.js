@@ -8,8 +8,10 @@ class Private extends Composer {
         super();
 
         // init middlewares
-        // this.use(Composer.acl(this.is_private.bind(this), new Admin(database)));
-        // this.use(Composer.acl(this.is_private.bind(this), new Member(database)));
+        this.use(Composer.acl(this.is_private.bind(this), new Admin(database)));
+        this.use(
+            Composer.acl(this.is_private.bind(this), new Member(database))
+        );
     }
 
     is_private(context, next) {

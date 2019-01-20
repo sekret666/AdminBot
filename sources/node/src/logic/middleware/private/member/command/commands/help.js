@@ -1,7 +1,7 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../utils.js");
 
-class PingCommand extends Composer {
+class HelpCommand extends Composer {
     constructor(database) {
         super();
 
@@ -9,15 +9,19 @@ class PingCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("ping", this.ping.bind(this));
-        this.command(`ping@${process.env.BOT_ID}`, this.ping.bind(this));
+        this.command("help", this.help.bind(this));
+        this.command(`help@${process.env.BOT_ID}`, this.help.bind(this));
     }
 
-    async ping(context, next) {
+    async help(context, next) {
         await context.replyWithMarkdown(`
-pong!
+Supported private member commands:
+
+/help
+/ping
+/register {password}
         `);
     }
 }
 
-exports.PingCommand = PingCommand;
+exports.HelpCommand = HelpCommand;

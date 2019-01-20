@@ -9,19 +9,14 @@ class GlobalUnlearnCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("globalunlearn", this.handler_admin.bind(this));
+        this.command("globalunlearn", this.global_unlearn.bind(this));
         this.command(
             `globalunlearn@${process.env.BOT_ID}`,
-            this.handler_admin.bind(this)
+            this.global_unlearn.bind(this)
         );
     }
 
-    async handler_admin(context, next) {
-        // check handler condition (is admin)
-        if (!(await this.database.is_admin(context.message.from.id))) {
-            return next();
-        }
-
+    async global_unlearn(context, next) {
         // check in reply of message
         let spam_words = [];
         if ("reply_to_message" in context.message) {

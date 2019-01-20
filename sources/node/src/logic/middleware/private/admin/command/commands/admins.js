@@ -9,24 +9,11 @@ class AdminsCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("admins", this.handler_private_admin.bind(this));
-        this.command(
-            `admins@${process.env.BOT_ID}`,
-            this.handler_private_admin.bind(this)
-        );
+        this.command("admins", this.admins.bind(this));
+        this.command(`admins@${process.env.BOT_ID}`, this.admins.bind(this));
     }
 
-    async handler_private_admin(context, next) {
-        // check handler condition (is private and admin)
-        if (
-            !(
-                context.message.chat.type === "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
-            return next();
-        }
-
+    async admins(context, next) {
         // get admins list
         let admins = await this.database.get_admins();
 
