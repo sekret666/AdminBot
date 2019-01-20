@@ -3,9 +3,8 @@ const Telegraf = require("telegraf");
 const { Database } = require("../database/db_manager.js");
 
 const { Base } = require("./middleware/base.js");
-const { Command } = require("./middleware/command.js");
-const { Member } = require("./middleware/member.js");
-const { Message } = require("./middleware/message.js");
+const { Group } = require("./middleware/group/group.js");
+const { Private } = require("./middleware/private/private.js");
 
 class Bot {
     constructor(token) {
@@ -22,9 +21,8 @@ class Bot {
 
         // init middlewares
         this.bot.use(new Base(this.database));
-        this.bot.use(new Command(this.database));
-        this.bot.use(new Member(this.database));
-        this.bot.use(new Message(this.database));
+        this.bot.use(new Group(this.database));
+        this.bot.use(new Private(this.database));
     }
 
     start() {
