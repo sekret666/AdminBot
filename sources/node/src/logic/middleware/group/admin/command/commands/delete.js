@@ -9,24 +9,11 @@ class DeleteCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("delete", this.handler_public_admin.bind(this));
-        this.command(
-            `delete@${process.env.BOT_ID}`,
-            this.handler_public_admin.bind(this)
-        );
+        this.command("delete", this.delete.bind(this));
+        this.command(`delete@${process.env.BOT_ID}`, this.delete.bind(this));
     }
 
-    async handler_public_admin(context, next) {
-        // check handler condition (is public and admin)
-        if (
-            !(
-                context.message.chat.type !== "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
-            return next();
-        }
-
+    async delete(context, next) {
         // get optional delete number
         let number = parseInt(
             context.message.text.replace(/^\/delete@?[a-zA-Z]* /, "")

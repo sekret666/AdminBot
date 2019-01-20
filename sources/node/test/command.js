@@ -26,6 +26,20 @@ class Command extends Composer {
         this.use(new LearnsCommand(database));
         this.use(new LearnCommand(database));
         this.use(new UnlearnCommand(database));
+
+        this.on("text", this.unsupport_handler.bind(this));
+    }
+
+    async unsupport_handler(context, next) {
+        // check handler condition (is command)
+        if (!context.message.text.match(/^\/[a-zA-Z@]*$/)) {
+            return next();
+        }
+
+        await context.replyWithMarkdown(`
+Unsupported command!
+click /help
+        `);
     }
 }
 
