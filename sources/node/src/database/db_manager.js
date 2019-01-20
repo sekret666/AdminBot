@@ -7,15 +7,14 @@ const SpamModel = require(__dirname + "/spam");
 const ClearPeriodModel = require(__dirname + "/clear_period");
 const ParentChildInGroupModel = require(__dirname + "/parent_child_in_group");
 
-
 const dbConfig = getDatabaseConfig();
 const options = {
     dialect: dbConfig.dialect,
     operatorsAliases: false
-}
+};
 
-if (options.dialect == 'sqlite') {
-    options.storage = process.env.DB_STORAGE
+if (options.dialect == "sqlite") {
+    options.storage = process.env.DB_STORAGE;
 }
 
 const sequelize = new Sequelize(
@@ -295,7 +294,7 @@ class Database {
             return null;
         }
 
-        return result.parentTgId
+        return result.parentTgId;
     }
 
     async set_parent(groupTgId, childTgId, parentTgId) {
@@ -315,7 +314,7 @@ class Database {
         });
     }
 
-    async find_or_create_group(groupId) {
+    async init_group(groupId) {
         const [group, _] = await Group.findOrCreate({
             where: {
                 tgId: groupId
@@ -324,6 +323,34 @@ class Database {
 
         return group;
     }
+
+    async uninit_group(groupId) {}
+
+    async get_group_settings(groupId) {
+        return {
+            warn_log: true,
+            warns: {
+                add_bot: 1,
+                bot_forward: 1,
+                bot_message: 1,
+                chat_forward: 1,
+                flood: 1,
+                link: 1,
+                spam: 1
+            },
+            unties: {
+                add_bot: true,
+                bot_forward: true,
+                bot_message: true,
+                chat_forward: true,
+                flood: true,
+                link: true,
+                spam: true
+            }
+        };
+    }
+
+    async set_group_settings(groupId, settings) {}
 }
 
 function getDatabaseConfig() {
@@ -332,7 +359,7 @@ function getDatabaseConfig() {
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
         dbName: process.env.DB_NAME
-    }
+    };
 }
 
 exports.Database = Database;

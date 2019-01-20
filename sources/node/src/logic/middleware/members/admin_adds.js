@@ -42,6 +42,7 @@ class AdminAddsMember extends Composer {
         // delete message
         await context.deleteMessage();
     }
+
     async adds_bot(context, member) {
         // check handler condition (joined bot and not me)
         if (!(member.is_bot && !process.env.BOT_TOKEN.includes(member.id))) {
@@ -51,6 +52,7 @@ class AdminAddsMember extends Composer {
         // delete message
         await context.deleteMessage();
     }
+
     async adds_me(context, member) {
         // check handler condition (joined bot and me)
         if (!(member.is_bot && process.env.BOT_TOKEN.includes(member.id))) {
@@ -58,7 +60,7 @@ class AdminAddsMember extends Composer {
         }
 
         // create group configs in database
-        await this.database.find_or_create_group(context.message.chat.id);
+        await this.database.init_group(context.message.chat.id);
 
         // say thanks
         await context.replyWithMarkdown(`

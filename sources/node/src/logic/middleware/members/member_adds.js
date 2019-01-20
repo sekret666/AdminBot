@@ -42,15 +42,18 @@ class MemberAddsMember extends Composer {
         // delete message
         await context.deleteMessage();
     }
+
     async adds_bot(context, member) {
         // check handler condition (joined bot and not me)
         if (!(member.is_bot && !process.env.BOT_TOKEN.includes(member.id))) {
             return;
         }
 
+        // get warn number
         // remove bot
         // delete message
         // warm
+        let warn_number = (await this.database.get_group_settings(context.message.chat.id)).;
         await context.telegram.kickChatMember(
             context.message.chat.id,
             member.id
@@ -60,10 +63,11 @@ class MemberAddsMember extends Composer {
             context,
             this.database,
             context.message.from.id,
-            1,
+            ,
             "Add bot"
         );
     }
+
     async adds_me(context, member) {
         // check handler condition (joined bot and me)
         if (!(member.is_bot && process.env.BOT_TOKEN.includes(member.id))) {
