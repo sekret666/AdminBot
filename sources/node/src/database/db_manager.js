@@ -319,7 +319,7 @@ class Database {
         });
     }
 
-    async init_group(groupId) {
+    async find_or_create_group(groupId) {
         const [group, _] = await Group.findOrCreate({
             where: {
                 tgId: groupId
