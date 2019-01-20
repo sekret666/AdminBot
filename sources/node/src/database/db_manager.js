@@ -58,8 +58,8 @@ class Database {
         Spam.belongsToMany(Group, { through: "SpamGroup" });
         Group.belongsToMany(Spam, { through: "SpamGroup" });
 
-        Rule.belongsToMany(Group, { through: 'GroupRule'} );
-        Group.belongsToMany(Rule, { through: 'GroupRule' } );
+        Rule.belongsToMany(Group, { through: "GroupRule" });
+        Group.belongsToMany(Rule, { through: "GroupRule" });
 
         Group.hasMany(ClearPeriod);
 
@@ -329,35 +329,6 @@ class Database {
         return group;
     }
 
-<<<<<<< HEAD
-    async uninit_group(groupId) {}
-
-    async get_group_settings(groupId) {
-        return {
-            warn_log: true,
-            warns: {
-                add_bot: 1,
-                bot_forward: 1,
-                bot_message: 1,
-                chat_forward: 1,
-                flood: 1,
-                link: 1,
-                spam: 1
-            },
-            unties: {
-                add_bot: true,
-                bot_forward: true,
-                bot_message: true,
-                chat_forward: true,
-                flood: true,
-                link: true,
-                spam: true
-            }
-        };
-    }
-
-    async set_group_settings(groupId, settings) {}
-=======
     async find_or_create_rule(ruleType) {
         const [rule, _] = await Rule.findOrCreate({
             where: {
@@ -372,7 +343,7 @@ class Database {
         const group = await Group.findByTgId(groupTgId);
         const rule = await this.find_or_create_rule(ruleType);
 
-        await group.addRule(rule)
+        await group.addRule(rule);
     }
 
     async get_group_rules(groupTgId) {
@@ -380,7 +351,6 @@ class Database {
 
         return await group.getRules();
     }
->>>>>>> 4465165751da41ba7422bd5837519f3af13fa008
 }
 
 function getDatabaseConfig() {
