@@ -17,6 +17,7 @@ class HelpCommand extends Composer {
 Supported public admin commands:
 
 /help
+/init
 /leave
 /delete [{number}]
 /warn [{number}]

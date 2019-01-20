@@ -2,6 +2,7 @@ const Composer = require("telegraf/composer");
 
 const { HelpCommand } = require("./commands/help.js");
 
+const { InitCommand } = require("./commands/init.js");
 const { LeaveCommand } = require("./commands/leave.js");
 const { DeleteCommand } = require("./commands/delete.js");
 
@@ -19,6 +20,7 @@ class Command extends Composer {
         // init middlewares
         this.use(new HelpCommand(database));
 
+        this.use(new InitCommand(database));
         this.use(new LeaveCommand(database));
         this.use(new DeleteCommand(database));
 
