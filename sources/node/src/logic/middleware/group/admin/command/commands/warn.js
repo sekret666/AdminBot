@@ -9,24 +9,11 @@ class WarnCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("warn", this.handler_public_admin.bind(this));
-        this.command(
-            `warn@${process.env.BOT_ID}`,
-            this.handler_public_admin.bind(this)
-        );
+        this.command("warn", this.warn.bind(this));
+        this.command(`warn@${process.env.BOT_ID}`, this.warn.bind(this));
     }
 
-    async handler_public_admin(context, next) {
-        // check handler condition (is public and admin)
-        if (
-            !(
-                context.message.chat.type !== "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
-            return next();
-        }
-
+    async warn(context, next) {
         // get optional warn number
         let number = parseInt(
             context.message.text.replace(/^\/warn@?[a-zA-Z]* /, "")

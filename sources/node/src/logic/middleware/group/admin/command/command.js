@@ -1,5 +1,7 @@
 const Composer = require("telegraf/composer");
 
+const { HelpCommand } = require("./commands/help.js");
+
 const { LeaveCommand } = require("./commands/leave.js");
 const { DeleteCommand } = require("./commands/delete.js");
 

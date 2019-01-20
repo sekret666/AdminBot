@@ -1,13 +1,13 @@
 const Composer = require("telegraf/composer");
 
-const { SpamMessage } = require("./spam.js");
-const { FloodMessage } = require("./flood.js");
-const { BotMessage } = require("./bot.js");
+const { SpamMessage } = require("./messages/spam.js");
+const { FloodMessage } = require("./messages/flood.js");
+const { BotMessage } = require("./messages/bot.js");
 
-const { BotForwardMessage } = require("./bot_forward.js");
-const { ChatForwardMessage } = require("./chat_forward.js");
+const { BotForwardMessage } = require("./messages/bot_forward.js");
+const { ChatForwardMessage } = require("./messages/chat_forward.js");
 
-const { HasLinkMessage } = require("./has_link.js");
+const { HasLinkMessage } = require("./messages/has_link.js");
 
 class Message extends Composer {
     constructor(database) {

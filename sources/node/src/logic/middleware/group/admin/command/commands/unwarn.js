@@ -9,24 +9,11 @@ class UnwarnCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("unwarn", this.handler_public_admin.bind(this));
-        this.command(
-            `unwarn@${process.env.BOT_ID}`,
-            this.handler_public_admin.bind(this)
-        );
+        this.command("unwarn", this.unwarn.bind(this));
+        this.command(`unwarn@${process.env.BOT_ID}`, this.unwarn.bind(this));
     }
 
-    async handler_public_admin(context, next) {
-        // check handler condition (is public and admin)
-        if (
-            !(
-                context.message.chat.type !== "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
-            return next();
-        }
-
+    async unwarn(context, next) {
         // get optional unwarn number
         let number = parseInt(
             context.message.text.replace(/^\/unwarn@?[a-zA-Z]* /, "")

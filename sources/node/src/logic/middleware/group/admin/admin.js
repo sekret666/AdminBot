@@ -1,6 +1,7 @@
 const Composer = require("telegraf/composer");
 
 const { Command } = require("./command/command.js");
+const { Member } = require("./member/member.js");
 
 class Admin extends Composer {
     constructor(database) {
@@ -10,6 +11,7 @@ class Admin extends Composer {
 
         // init middlewares
         this.use(this.is_admin.bind(this), new Command(database));
+        this.use(this.is_admin.bind(this), new Member(database));
     }
 
     async is_admin(context, next) {

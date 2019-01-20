@@ -9,24 +9,11 @@ class UnlearnCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("unlearn", this.handler_public_admin.bind(this));
-        this.command(
-            `unlearn@${process.env.BOT_ID}`,
-            this.handler_public_admin.bind(this)
-        );
+        this.command("unlearn", this.unlearn.bind(this));
+        this.command(`unlearn@${process.env.BOT_ID}`, this.unlearn.bind(this));
     }
 
-    async handler_public_admin(context, next) {
-        // check handler condition (is public and admin)
-        if (
-            !(
-                context.message.chat.type !== "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
-            return next();
-        }
-
+    async unlearn(context, next) {
         // check in reply of message
         let spam_words = [];
         if ("reply_to_message" in context.message) {

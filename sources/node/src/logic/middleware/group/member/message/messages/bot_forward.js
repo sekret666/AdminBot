@@ -9,10 +9,10 @@ class BotForwardMessage extends Composer {
         this.database = database;
 
         // init middlewares
-        this.use(this.bot_forward_handler.bind(this));
+        this.use(this.bot_forward.bind(this));
     }
 
-    async bot_forward_handler(context, next) {
+    async bot_forward(context, next) {
         // check handler condition (is forwarded from and from bot)
         if (
             !(

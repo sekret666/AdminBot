@@ -1,7 +1,7 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../utils.js");
 
-class AdminAddsMember extends Composer {
+class Adds extends Composer {
     constructor(database) {
         super();
 
@@ -9,15 +9,10 @@ class AdminAddsMember extends Composer {
         this.database = database;
 
         // init middlewares
-        this.on("new_chat_members", this.handler_admin_adds.bind(this));
+        this.on("new_chat_members", this.adds.bind(this));
     }
 
-    async handler_admin_adds(context, next) {
-        // check handler condition (is admin)
-        if (!(await this.database.is_admin(context.message.from.id))) {
-            return next();
-        }
-
+    async adds(context, next) {
         // iterate joined members and call handler
         for (let member of context.message.new_chat_members) {
             await this.adds_member.call(this, context, member);
@@ -49,8 +44,23 @@ class AdminAddsMember extends Composer {
             return;
         }
 
+        // get warn number
+        // remove bot
         // delete message
+        // warm
+        let warn_number = (await this.database.get_group_settings(context.message.chat.id)).;
+        await context.telegram.kickChatMember(
+            context.message.chat.id,
+            member.id
+        );
         await context.deleteMessage();
+        await warn(
+            context,
+            this.database,
+            context.message.from.id,
+            ,
+            "Add bot"
+        );
     }
 
     async adds_me(context, member) {
@@ -59,16 +69,17 @@ class AdminAddsMember extends Composer {
             return;
         }
 
-        // create group configs in database
-        await this.database.init_group(context.message.chat.id);
-
-        // say thanks
+        // say sorry
+        // left chat
         await context.replyWithMarkdown(`
-Thanks dear [${context.message.from.first_name}](tg://user?id=${
+Sorry dear [${context.message.from.first_name}](tg://user?id=${
             context.message.from.id
         })!
+
+Only my administrators can add me to groups or channels...
         `);
+        context.leaveChat();
     }
 }
 
-exports.AdminAddsMember = AdminAddsMember;
+exports.Adds = Adds;

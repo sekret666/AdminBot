@@ -9,24 +9,11 @@ class LearnsCommand extends Composer {
         this.database = database;
 
         // init middlewares
-        this.command("learns", this.handler_public_admin.bind(this));
-        this.command(
-            `learns@${process.env.BOT_ID}`,
-            this.handler_public_admin.bind(this)
-        );
+        this.command("learns", this.learns.bind(this));
+        this.command(`learns@${process.env.BOT_ID}`, this.learns.bind(this));
     }
 
-    async handler_public_admin(context, next) {
-        // check handler condition (is public and admin)
-        if (
-            !(
-                context.message.chat.type !== "private" &&
-                (await this.database.is_admin(context.message.from.id))
-            )
-        ) {
-            return next();
-        }
-
+    async learns(context, next) {
         // get spams list
         let spams = await this.database.get_spams(context.message.chat.id);
 
