@@ -1,8 +1,6 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../../utils.js");
 
-const DENY_LINK = "DENY_LINK";
-
 class LinkMessage extends Composer {
     constructor(database) {
         super();
@@ -16,13 +14,16 @@ class LinkMessage extends Composer {
 
     async link(context, next) {
         // get group rule link deny regexes
-        let regexes = (await this.database.get_group_rules(
-            context.message.chat.id
-        ))
-            .map(rule => rule.dataValues.type)
-            .filter(rule => rule.includes("DENY_LINK_"))
-            .map(rule => rule.replace("DENY_LINK_", ""))
-            .map(regex => new RegExp(regex));
+        let regexes = [];
+        try {
+            regexes = (await this.database.get_group_rules(
+                context.message.chat.id
+            ))
+                .map(rule => rule.dataValues.type)
+                .filter(rule => rule.includes("DENY_LINK_"))
+                .map(rule => rule.replace("DENY_LINK_", ""))
+                .map(regex => new RegExp(regex));
+        } catch (e) {}
 
         // get message url entities
         let urls = this.get_urls(context);
