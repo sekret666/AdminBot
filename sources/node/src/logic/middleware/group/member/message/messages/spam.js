@@ -1,6 +1,8 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../../utils.js");
 
+const DENY_SPAM = "DENY_SPAM";
+
 class SpamMessage extends Composer {
     constructor(database) {
         super();
@@ -13,6 +15,13 @@ class SpamMessage extends Composer {
     }
 
     async spam(context, next) {
+        // check handler condition (group denied spams)
+        if (
+            !(await this.database.has_rule(context.message.chat.id, DENY_SPAM))
+        ) {
+            return next();
+        }
+
         // check handler condition (text or caption has spam words of group)
         let words = (context.message.text || "")
             .split(" ")

@@ -18,7 +18,7 @@ class RemoveRuleCommand extends Composer {
     async removerule(context, next) {
         // remove rule from group
         let rule = context.message.text
-            .replace(/^\/learn@?[a-zA-Z]* /, "")
+            .replace(/^\/removerule@?[a-zA-Z]* /, "")
             .toUpperCase();
         await this.database.remove_group_rule(context.message.chat.id, rule);
 

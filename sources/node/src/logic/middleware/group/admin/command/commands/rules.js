@@ -14,12 +14,15 @@ class RulesCommand extends Composer {
 
     async rules(context, next) {
         // create group rules in database
-        let rules = this.database.get_group_rules(context.message.chat.id);
+        let group_rules = await this.database.get_group_rules(
+            context.message.chat.id
+        );
 
         // send rules list
         await context.replyWithMarkdown(`
 Rules list:
-${rules.join("\n")}
+
+*${group_rules.map(rule => rule.dataValues.type).join("\n")}*
         `);
     }
 }

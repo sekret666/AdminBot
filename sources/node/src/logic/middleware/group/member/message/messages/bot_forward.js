@@ -1,6 +1,8 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../../utils.js");
 
+const DENY_BOT_FORWARD = "DENY_BOT_FORWARD";
+
 class BotForwardMessage extends Composer {
     constructor(database) {
         super();
@@ -13,6 +15,16 @@ class BotForwardMessage extends Composer {
     }
 
     async bot_forward(context, next) {
+        // check handler condition (group denied bot forwards)
+        if (
+            !(await this.database.has_rule(
+                context.message.chat.id,
+                DENY_BOT_FORWARD
+            ))
+        ) {
+            return next();
+        }
+
         // check handler condition (is forwarded from and from bot)
         if (
             !(
