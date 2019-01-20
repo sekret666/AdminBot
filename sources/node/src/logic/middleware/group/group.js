@@ -8,17 +8,15 @@ class Group extends Composer {
         super();
 
         // init middlewares
-        this.use(this.is_group.bind(this), new Admin(database));
-        this.use(this.is_group.bind(this), new Member(database));
+        this.use(Composer.acl(this.is_group.bind(this), new Admin(database)));
+        this.use(Composer.acl(this.is_group.bind(this), new Member(database)));
     }
 
     is_group(context, next) {
         if (context.message.chat.type !== "private") {
-            console.log("GROUP");
-            return next();
+            return true;
         } else {
-            console.log("NOT GROUP");
-            return next();
+            return true;
         }
     }
 }

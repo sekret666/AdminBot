@@ -1,7 +1,7 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../utils.js");
+const { warn, unwarn } = require("../../../../../utils.js");
 
-class Adds extends Composer {
+class AddsMember extends Composer {
     constructor(database) {
         super();
 
@@ -44,8 +44,22 @@ class Adds extends Composer {
             return;
         }
 
+        // get warn number
+        // remove bot
         // delete message
+        // warm
+        await context.telegram.kickChatMember(
+            context.message.chat.id,
+            member.id
+        );
         await context.deleteMessage();
+        await warn(
+            context,
+            this.database,
+            context.message.from.id,
+            1,
+            "Add bot"
+        );
     }
 
     async adds_me(context, member) {
@@ -54,16 +68,17 @@ class Adds extends Composer {
             return;
         }
 
-        // create group configs in database
-        await this.database.init_group(context.message.chat.id);
-
-        // say thanks
+        // say sorry
+        // left chat
         await context.replyWithMarkdown(`
-Thanks dear [${context.message.from.first_name}](tg://user?id=${
+Sorry dear [${context.message.from.first_name}](tg://user?id=${
             context.message.from.id
         })!
+
+Only my administrators can add me to groups or channels...
         `);
+        context.leaveChat();
     }
 }
 
-exports.Adds = Adds;
+exports.AddsMember = AddsMember;

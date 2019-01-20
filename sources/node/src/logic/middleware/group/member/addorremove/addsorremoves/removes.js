@@ -1,7 +1,7 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../utils.js");
+const { warn, unwarn } = require("../../../../../utils.js");
 
-class Removes extends Composer {
+class RemovesMember extends Composer {
     constructor(database) {
         super();
 
@@ -18,4 +18,4 @@ class Removes extends Composer {
     }
 }
 
-exports.Removes = Removes;
+exports.RemovesMember = RemovesMember;

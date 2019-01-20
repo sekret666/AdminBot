@@ -1,5 +1,5 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../utils.js");
+const { warn, unwarn } = require("../../../../../utils.js");
 
 class BotMessage extends Composer {
     constructor(database) {
@@ -9,10 +9,10 @@ class BotMessage extends Composer {
         this.database = database;
 
         // init middlewares
-        this.use(this.bot_handler.bind(this));
+        this.use(this.bot.bind(this));
     }
 
-    async bot_handler(context, next) {
+    async bot(context, next) {
         // check handler condition (from bot and not me)
         if (
             !(

@@ -1,7 +1,7 @@
 const Composer = require("telegraf/composer");
 
 const { Command } = require("./command/command.js");
-const { Member } = require("./member/member.js");
+const { AddOrRemove } = require("./addorremove/addorremove.js");
 
 class Admin extends Composer {
     constructor(database) {
@@ -10,17 +10,17 @@ class Admin extends Composer {
         this.database = database;
 
         // init middlewares
-        this.use(this.is_admin.bind(this), new Command(database));
-        this.use(this.is_admin.bind(this), new Member(database));
+        this.use(Composer.acl(this.is_admin.bind(this), new Command(database)));
+        this.use(
+            Composer.acl(this.is_admin.bind(this), new AddOrRemove(database))
+        );
     }
 
     async is_admin(context, next) {
         if (await this.database.is_admin(context.message.from.id)) {
-            console.log("ADMIN");
-            return next();
+            return true;
         } else {
-            console.log("NOT ADMIN");
-            return next();
+            return false;
         }
     }
 }

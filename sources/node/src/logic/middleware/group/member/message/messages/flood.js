@@ -1,5 +1,5 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../utils.js");
+const { warn, unwarn } = require("../../../../../utils.js");
 
 class FloodMessage extends Composer {
     constructor(database) {
@@ -12,10 +12,10 @@ class FloodMessage extends Composer {
         this.floods = {};
 
         // init middlewares
-        this.use(this.flood_handler.bind(this));
+        this.use(this.flood.bind(this));
     }
 
-    async flood_handler(context, next) {
+    async flood(context, next) {
         // check handler condition (is public)
         if (!(context.message.chat.type !== "private")) {
             return next();

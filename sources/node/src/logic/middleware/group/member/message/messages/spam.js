@@ -1,5 +1,5 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../utils.js");
+const { warn, unwarn } = require("../../../../../utils.js");
 
 class SpamMessage extends Composer {
     constructor(database) {
@@ -9,10 +9,10 @@ class SpamMessage extends Composer {
         this.database = database;
 
         // init middlewares
-        this.use(this.spam_handler.bind(this));
+        this.use(this.spam.bind(this));
     }
 
-    async spam_handler(context, next) {
+    async spam(context, next) {
         // check handler condition (text or caption has spam words of group)
         let words = (context.message.text || "")
             .split(" ")

@@ -1,5 +1,5 @@
 const Composer = require("telegraf/composer");
-const { warn, unwarn } = require("../../utils.js");
+const { warn, unwarn } = require("../../../../../utils.js");
 
 class HasLinkMessage extends Composer {
     constructor(database) {
@@ -9,10 +9,10 @@ class HasLinkMessage extends Composer {
         this.database = database;
 
         // init middlewares
-        this.use(this.has_link_handler.bind(this));
+        this.use(this.has_link.bind(this));
     }
 
-    async has_link_handler(context, next) {
+    async has_link(context, next) {
         // not implemented yet!
         return next();
     }
