@@ -19,10 +19,10 @@ class RulesCommand extends Composer {
         );
 
         // send rules list
-        await context.replyWithMarkdown(`
+        await context.reply(`
 Rules list:
 
-*${group_rules.map(rule => rule.dataValues.type).join("\n")}*
+${group_rules.map(rule => rule.dataValues.type).join("\n")}
         `);
     }
 }

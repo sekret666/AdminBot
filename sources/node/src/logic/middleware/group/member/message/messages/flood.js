@@ -1,8 +1,6 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../../utils.js");
 
-const DENY_FLOOD = "DENY_FLOOD";
-
 class FloodMessage extends Composer {
     constructor(database) {
         super();
@@ -20,7 +18,10 @@ class FloodMessage extends Composer {
     async flood(context, next) {
         // check handler condition (group denied floods)
         if (
-            !(await this.database.has_rule(context.message.chat.id, DENY_FLOOD))
+            !(await this.database.has_rule(
+                context.message.chat.id,
+                "DENY_FLOOD"
+            ))
         ) {
             return next();
         }

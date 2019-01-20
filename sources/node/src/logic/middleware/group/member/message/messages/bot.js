@@ -1,8 +1,6 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../../utils.js");
 
-const DENY_BOT = "DENY_BOT";
-
 class BotMessage extends Composer {
     constructor(database) {
         super();
@@ -17,7 +15,7 @@ class BotMessage extends Composer {
     async bot(context, next) {
         // check handler condition (group denied bots)
         if (
-            !(await this.database.has_rule(context.message.chat.id, DENY_BOT))
+            !(await this.database.has_rule(context.message.chat.id, "DENY_BOT"))
         ) {
             return next();
         }

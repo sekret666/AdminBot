@@ -1,8 +1,6 @@
 const Composer = require("telegraf/composer");
 const { warn, unwarn } = require("../../../utils.js");
 
-const DENY_CHAT_FORWARD = "DENY_CHAT_FORWARD";
-
 class ChatForwardMessage extends Composer {
     constructor(database) {
         super();
@@ -19,7 +17,7 @@ class ChatForwardMessage extends Composer {
         if (
             !(await this.database.has_rule(
                 context.message.chat.id,
-                DENY_CHAT_FORWARD
+                "DENY_CHAT_FORWARD"
             ))
         ) {
             return next();

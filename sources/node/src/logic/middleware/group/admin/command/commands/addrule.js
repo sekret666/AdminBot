@@ -14,9 +14,7 @@ class AddRuleCommand extends Composer {
 
     async addrule(context, next) {
         // add rule to group
-        let rule = context.message.text
-            .replace(/^\/addrule@?[a-zA-Z]* /, "")
-            .toUpperCase();
+        let rule = context.message.text.replace(/^\/addrule@?[a-zA-Z]* /, "");
         await this.database.add_rule_to_group(context.message.chat.id, rule);
 
         // send ok

@@ -23,15 +23,15 @@ class AllRulesCommand extends Composer {
             "DENY_BOT",
             "DENY_BOT_FORWARD",
             "DENY_CHAT_FORWARD",
-            "DENY_LINK",
-            "DENY_FILE"
+            "DENY_LINK_regex",
+            "DENY_FILE_regex"
         ];
 
         // send rules list
-        await context.replyWithMarkdown(`
+        await context.reply(`
 All rules list:
 
-*${all_rules.join("\n")}*
+${all_rules.join("\n")}
         `);
     }
 }
