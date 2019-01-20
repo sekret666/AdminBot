@@ -351,6 +351,29 @@ class Database {
 
         return await group.getRules();
     }
+
+    async remove_group_rule(groupTgId, ruleType) {
+        const group = await Group.findByTgId(groupTgId);
+        const rule = await Rule.findByType(ruleType);
+
+        if (group == null) {
+            return false;
+        }
+
+        await group.removeRule(rule);
+    }
+
+
+    async has_rule(groupTgId, ruleType) {
+        const group = await Group.findByTgId(groupTgId);
+        const rule = await Rule.findByType(ruleType);
+
+        if (group == null) {
+            return false;
+        }
+
+        return await group.hasRule(rule);
+    }
 }
 
 function getDatabaseConfig() {

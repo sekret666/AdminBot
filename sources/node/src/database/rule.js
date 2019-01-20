@@ -5,5 +5,15 @@ exports.createModel = (sequelize, DataTypes) => {
         type: {type: DataTypes.STRING, unique: true},
     })
 
+    Rule.findByType = async function(ruleType) {
+        const rule = await this.findOne({
+            where: {
+                type: ruleType
+            }
+        })
+
+        return rule
+    }
+
     return Rule
 }
