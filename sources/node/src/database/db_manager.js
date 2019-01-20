@@ -343,11 +343,19 @@ class Database {
         const group = await Group.findByTgId(groupTgId);
         const rule = await this.find_or_create_rule(ruleType);
 
+        if (group == null) {
+            return;
+        }
+
         await group.addRule(rule);
     }
 
     async get_group_rules(groupTgId) {
         const group = await Group.findByTgId(groupTgId);
+
+        if (group == null) {
+            return;
+        }
 
         return await group.getRules();
     }
