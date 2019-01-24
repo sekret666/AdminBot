@@ -26,7 +26,7 @@ class Bot {
     }
 
     start() {
-        this.bot.launch();
+        this.bot.startPolling();
     }
 }
 

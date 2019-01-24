@@ -20,8 +20,9 @@ class LearnsCommand extends Composer {
         spams = spams.map(spam => spam.dataValues.text);
 
         // send spams list
-        await context.replyWithMarkdown(`
+        await context.reply(`
 Spams list:
+
 ${spams.join("\n")}
         `);
     }

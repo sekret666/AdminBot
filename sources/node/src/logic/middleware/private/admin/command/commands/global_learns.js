@@ -25,8 +25,9 @@ class GlobalLearnsCommand extends Composer {
         );
 
         // send global spams list
-        await context.replyWithMarkdown(`
+        await context.reply(`
 Global spams list:
+
 ${global_spams.join("\n")}
         `);
     }

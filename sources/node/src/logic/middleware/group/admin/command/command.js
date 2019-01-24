@@ -13,6 +13,11 @@ const { LearnsCommand } = require("./commands/learns.js");
 const { LearnCommand } = require("./commands/learn.js");
 const { UnlearnCommand } = require("./commands/unlearn.js");
 
+const { AllRulesCommand } = require("./commands/allrules.js");
+const { RulesCommand } = require("./commands/rules.js");
+const { AddRuleCommand } = require("./commands/addrule.js");
+const { RemoveRuleCommand } = require("./commands/removerule.js");
+
 class Command extends Composer {
     constructor(database) {
         super();
@@ -30,6 +35,11 @@ class Command extends Composer {
         this.use(new LearnsCommand(database));
         this.use(new LearnCommand(database));
         this.use(new UnlearnCommand(database));
+
+        this.use(new AllRulesCommand(database));
+        this.use(new RulesCommand(database));
+        this.use(new AddRuleCommand(database));
+        this.use(new RemoveRuleCommand(database));
     }
 }
 

@@ -25,6 +25,10 @@ Supported public admin commands:
 /learns
 /learn [{words}]
 /unlearn [{words}]
+/allrules
+/rules
+/addrule {rule}
+/removerule {rule}
         `);
     }
 }

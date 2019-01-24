@@ -13,6 +13,13 @@ class BotMessage extends Composer {
     }
 
     async bot(context, next) {
+        // check handler condition (group denied bots)
+        if (
+            !(await this.database.has_rule(context.message.chat.id, "DENY_BOT"))
+        ) {
+            return next();
+        }
+
         // check handler condition (from bot and not me)
         if (
             !(

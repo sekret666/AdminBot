@@ -13,6 +13,16 @@ class SpamMessage extends Composer {
     }
 
     async spam(context, next) {
+        // check handler condition (group denied spams)
+        if (
+            !(await this.database.has_rule(
+                context.message.chat.id,
+                "DENY_SPAM"
+            ))
+        ) {
+            return next();
+        }
+
         // check handler condition (text or caption has spam words of group)
         let words = (context.message.text || "")
             .split(" ")

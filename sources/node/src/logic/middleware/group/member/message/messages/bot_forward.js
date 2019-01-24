@@ -13,6 +13,16 @@ class BotForwardMessage extends Composer {
     }
 
     async bot_forward(context, next) {
+        // check handler condition (group denied bot forwards)
+        if (
+            !(await this.database.has_rule(
+                context.message.chat.id,
+                "DENY_BOT_FORWARD"
+            ))
+        ) {
+            return next();
+        }
+
         // check handler condition (is forwarded from and from bot)
         if (
             !(

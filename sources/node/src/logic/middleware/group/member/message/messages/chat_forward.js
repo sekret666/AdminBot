@@ -13,6 +13,16 @@ class ChatForwardMessage extends Composer {
     }
 
     async chat_forward(context, next) {
+        // check handler condition (group denied chat forwards)
+        if (
+            !(await this.database.has_rule(
+                context.message.chat.id,
+                "DENY_CHAT_FORWARD"
+            ))
+        ) {
+            return next();
+        }
+
         // check handler condition (is forwarded from chat and from channel)
         if (
             !(

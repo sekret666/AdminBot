@@ -7,7 +7,8 @@ const { BotMessage } = require("./messages/bot.js");
 const { BotForwardMessage } = require("./messages/bot_forward.js");
 const { ChatForwardMessage } = require("./messages/chat_forward.js");
 
-const { HasLinkMessage } = require("./messages/has_link.js");
+const { LinkMessage } = require("./messages/link.js");
+const { FileMessage } = require("./messages/file.js");
 
 class Message extends Composer {
     constructor(database) {
@@ -21,7 +22,8 @@ class Message extends Composer {
         this.use(new BotForwardMessage(database));
         this.use(new ChatForwardMessage(database));
 
-        this.use(new HasLinkMessage(database));
+        this.use(new LinkMessage(database));
+        this.use(new FileMessage(database));
     }
 }
 
