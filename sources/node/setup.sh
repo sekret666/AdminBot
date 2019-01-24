@@ -38,3 +38,6 @@ DB_USERNAME=$DB_USERNAME
 DB_PASSWORD=$DB_PASSWORD
 DB_STORAGE=$DB_STORAGE
 " > .env
+
+npm install
+npm run start
