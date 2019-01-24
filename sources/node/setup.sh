@@ -1,31 +1,31 @@
-echo -n Enter bot token:
+echo -n Enter bot token: 
 read -s BOT_TOKEN
 echo
 
-echo -n Enter bot password:
+echo -n Enter bot password: 
 read -s BOT_PASSWORD
 echo
 
-echo -n Enter bot ID:
+echo -n Enter bot ID: 
 read BOT_ID
 
-echo -n Enter database dialect\(mysql or sqlite\):
+echo -n Enter database dialect\(mysql or sqlite\): 
 read DB_DIALECT
 
-echo -n Enter database host:
+echo -n Enter database host: 
 read DB_HOST
 
-echo -n Enter database name:
+echo -n Enter database name: 
 read DB_NAME
 
-echo -n Enter database username:
+echo -n Enter database username: 
 read DB_USERNAME
 
-echo -n Enter database password:
+echo -n Enter database password: 
 read -s DB_PASSWORD
 echo
 
-echo -n Enter database storage\(only for sqlite\)
+echo -n Enter database storage\(only for sqlite\): 
 read DB_STORAGE
 
 echo "BOT_TOKEN=$BOT_TOKEN
