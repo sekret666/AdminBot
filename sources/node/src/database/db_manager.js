@@ -10,6 +10,7 @@ const ParentChildInGroupModel = require(__dirname + "/parent_child_in_group");
 
 const dbConfig = getDatabaseConfig();
 const options = {
+    host: dbConfig.host,
     dialect: dbConfig.dialect,
     operatorsAliases: false
 };
@@ -386,6 +387,7 @@ class Database {
 
 function getDatabaseConfig() {
     return {
+        host: process.env.DB_HOST,
         dialect: process.env.DB_DIALECT,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
